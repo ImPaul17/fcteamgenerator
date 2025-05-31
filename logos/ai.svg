@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <path d="M12,2 C17.5228,2 22,6.47715 22,12 C22,17.5228 17.5228,22 12,22 C6.47715,22 2,17.5228 2,12 C2,6.47715 6.47715,2 12,2 Z M12,4 C7.58172,4 4,7.58172 4,12 C4,16.4183 7.58172,20 12,20 C16.4183,20 20,16.4183 20,12 C20,7.58172 16.4183,4 12,4 Z" fill="#FFFFFF" fill-rule="nonzero"></path>
+        <path d="M9.5,9 C10.3284,9 11,9.67157 11,10.5 C11,11.3284 10.3284,12 9.5,12 C8.67157,12 8,11.3284 8,10.5 C8,9.67157 8.67157,9 9.5,9 Z" fill="#FFFFFF" fill-rule="nonzero"></path>
+        <path d="M14.5,9 C15.3284,9 16,9.67157 16,10.5 C16,11.3284 15.3284,12 14.5,12 C13.6716,12 13,11.3284 13,10.5 C13,9.67157 13.6716,9 14.5,9 Z" fill="#FFFFFF" fill-rule="nonzero"></path>
+        <path d="M12,16 C13.6569,16 15,14.6569 15,13 L9,13 C9,14.6569 10.3431,16 12,16 Z" fill="#FFFFFF" fill-rule="nonzero"></path>
+        <path d="M6,7 L8,7 L8,9 L6,9 L6,7 Z" fill="#FFFFFF" fill-rule="nonzero"></path>
+        <path d="M16,7 L18,7 L18,9 L16,9 L16,7 Z" fill="#FFFFFF" fill-rule="nonzero"></path>
+    </g>
+</svg>

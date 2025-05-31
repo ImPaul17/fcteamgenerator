@@ -1,0 +1,2606 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>FC Team Generator</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+
+    <style>
+        /* Fuentes */
+        @font-face {
+            font-family: 'CruyffSansExpanded-Heavy';
+            src: url('fonts/CruyffSansExpanded-Heavy.e64b4629.otf') format('opentype');
+        }
+
+        @font-face {
+            font-family: 'CruyffSans-Bold';
+            src: url('fonts/CruyffSans-Bold.ecd5078c.otf') format('opentype');
+        }
+
+        @font-face {
+            font-family: 'CruyffSans-Light';
+            src: url('fonts/CruyffSans-Light.443e7d8e.otf') format('opentype');
+        }
+
+        @font-face {
+            font-family: 'Rifton Norm';
+            src: url('fonts/Rifton%20Norm.otf') format('opentype');
+        }
+
+        @font-face {
+            font-family: 'DINPRO-BOLDITALIC';
+            src: url('fonts/DINPRO-BOLDITALIC.OTF') format('opentype');
+        }
+
+        @font-face {
+            font-family: 'DINPRO-LIGHTITALIC';
+            src: url('fonts/DINPRO-LIGHTITALIC.OTF') format('opentype');
+        }
+
+        @font-face {
+            font-family: 'DINPRO';
+            src: url('fonts/DINPRO.OTF') format('opentype');
+        }
+
+        /* Estilos básicos */
+        body {
+            font-family: 'DINPRO', sans-serif;
+            text-align: center;
+            background-color: #1D1D1D;
+            color: white;
+            margin: 0;
+            padding: 0;
+            opacity: 0;
+            animation: fadeIn 1s ease forwards;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+            }
+        }
+
+        h1 {
+            font-size: 3em;
+            font-family: 'Rifton Norm', sans-serif;
+            color: #ecf0f1;
+            margin-top: 80px;
+            margin-bottom: 50px;
+            position: relative;
+            z-index: 1;
+        }
+
+        button {
+            padding: 12px 24px;
+            font-size: 24px;
+            font-family: 'DINPRO-BOLDITALIC', sans-serif;
+            border-radius: 12px;
+            border: none;
+            background-color: #9747FF; /* Changed from green to purple */
+            color: white;
+            cursor: pointer;
+            transition: 0.4s;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            margin-bottom: 30px;
+            position: relative;
+            z-index: 1;
+        }
+
+        button:hover {
+            background-color: #7030A0; /* Darker purple for hover */
+            transform: scale(1.1);
+        }
+
+        button:active {
+            transform: scale(0.95);
+        }
+
+        .equipo-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 50px;
+            margin-top: 30px;
+        }
+
+        .equipo {
+            text-align: center;
+            height: 260px;
+            width: 260px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .escudo {
+            width: 200px;
+            height: 200px;
+            object-fit: contain;
+        }
+
+        /* Animaciones para los equipos */
+        .equipo.animating {
+            animation: equipoEntrance 0.8s ease forwards;
+        }
+
+        @keyframes equipoEntrance {
+            0% {
+                transform: translateY(30px);
+                opacity: 0;
+            }
+
+            100% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .nombre-equipo {
+            font-family: 'CruyffSansExpanded-Heavy', sans-serif;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        /* BOTÓN HAMBURGUESA */
+        .menu-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            width: 60px;
+            height: 60px;
+            background-color: #9747FF; /* Changed from green to purple */
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            gap: 6px;
+            cursor: pointer;
+            z-index: 1001;
+        }
+
+        /* Asegurar que el botón hamburguesa no se mueva cuando hay blur */
+        body.blur-background .menu-btn {
+            transform: none !important;
+            top: 20px !important;
+            left: 20px !important;
+        }
+
+        .menu-btn:hover {
+            background-color: #7030A0; /* Darker purple for hover */
+        }
+
+        .menu-btn img {
+            filter: brightness(0) invert(1);
+            transition: transform 0.3s ease;
+        }
+
+        .menu-btn:hover img {
+            transform: scale(1.1);
+        }
+
+        /* Contenedor del menú */
+        .menu-container {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1001;
+        }
+
+        /* Asegurar que el menú no se mueva cuando hay blur */
+        body.blur-background .menu-container {
+            transform: none !important;
+            /* Evitar que se desplace con el blur */
+            top: 20px !important;
+            /* Mantener la posición vertical fija */
+            left: 20px !important;
+            /* Mantener la posición horizontal fija */
+            position: fixed !important;
+            /* Forzar posición fija */
+        }
+
+        /* Asegurar que el botón hamburguesa no se mueva */
+        body.blur-background .menu-btn {
+            transform: none !important;
+            position: relative !important;
+            top: 0 !important;
+            left: 0 !important;
+        }
+
+        /* Botón Personalizado */
+        .personalized-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background-color: #9747FF; /* Changed from green to purple */
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            z-index: 1001;
+            transition: all 0.3s ease;
+        }
+
+        /* Evitar que el botón personalizado se desplace cuando tiene blur */
+        body.blur-background .personalized-btn {
+            transform: none !important;
+            top: 20px !important;
+            /* Mantener la posición vertical fija */
+            right: 20px !important;
+            /* Mantener la posición horizontal fija */
+            left: auto !important;
+        }
+
+        .personalized-btn:hover {
+            background-color: #7030A0; /* Darker purple for hover */
+        }
+
+        .personalized-btn img {
+            filter: brightness(0) invert(1);
+            transition: transform 0.3s ease;
+        }
+
+        .personalized-btn:hover img {
+            transform: scale(1.1);
+        }
+
+        /* Nuevo botón de Match Generator */
+        .match-generator-btn {
+            position: fixed;
+            top: 90px; /* Position below personalized-btn */
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background-color: #9747FF; /* Match other buttons */
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            z-index: 1001;
+            transition: all 0.3s ease;
+        }
+
+        .match-generator-btn:hover {
+            background-color: #7030A0;
+        }
+
+        .match-generator-btn img {
+            filter: brightness(0) invert(1); /* Make logo white */
+            transition: transform 0.3s ease;
+            width: 40px; /* Adjust size as needed */
+            height: 40px;
+        }
+
+        .match-generator-btn:hover img {
+            transform: scale(1.1);
+        }
+
+        /* MENÚ DESPLEGABLE */
+        .menu {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 60px;
+            height: 60px;
+            background-color: #9747FF; /* Changed from green to purple */
+            border-radius: 50%;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+            opacity: 0;
+        }
+
+        .menu-btn:hover+.menu,
+        .menu:hover {
+            width: 280px;
+            height: auto;
+            background-color: #7030A0; /* Darker purple for hover */
+            border-radius: 20px;
+            padding: 20px 10px 10px 10px;
+            pointer-events: auto;
+            opacity: 1;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .menu form {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            width: 100%;
+        }
+
+        .menu label {
+            display: flex;
+            align-items: center;
+            font-family: 'CruyffSansExpanded-Heavy', sans-serif;
+            font-size: 18px;
+            margin: 12px 0;
+            cursor: pointer;
+            color: white;
+            gap: 10px;
+            margin-left: 70px;
+        }
+
+        .menu input[type="checkbox"] {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid white;
+            border-radius: 50%;
+            background-color: transparent;
+            cursor: pointer;
+            transition: background-color 0.3s ease, border-color 0.3s ease, transform 0.2s ease;
+            position: relative;
+        }
+
+        .menu input[type="checkbox"]:checked {
+            background-color: #9747FF; /* Changed from green to purple */
+            border-color: #9747FF; /* Changed from green to purple */
+            transform: scale(1.1);
+        }
+
+        .menu input[type="checkbox"]:active {
+            transform: scale(0.9);
+        }
+
+        .menu input[type="checkbox"]:checked::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 10px;
+            height: 10px;
+            background-color: white;
+            border-radius: 50%;
+        }
+
+        /* Estilo para escudos blancos */
+        .escudo-blanco {
+            filter: brightness(0) invert(1) !important;
+            -webkit-filter: brightness(0) invert(1) !important;
+        }
+
+        /* Notificación Applied! */
+        .notification {
+            position: fixed;
+            left: 50%;
+            bottom: 10%;
+            transform: translate(-50%, 0) scale(0);
+            background-color: #9747FF; /* Changed from green to purple */
+            color: white;
+            font-family: 'DINPRO-BOLDITALIC', sans-serif;
+            font-size: 32px;
+            padding: 15px 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            opacity: 0;
+            pointer-events: none;
+            max-width: 90%;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        /* Ajuste para pantallas pequeñas */
+        @media screen and (max-width: 768px) {
+            .notification {
+                font-size: 24px;
+                padding: 12px 24px;
+                white-space: normal;
+            }
+        }
+
+        @keyframes notificationAppear {
+            0% {
+                transform: translate(-50%, 0) scale(0);
+                opacity: 0;
+            }
+
+            50% {
+                transform: translate(-50%, 0) scale(1.2);
+                opacity: 1;
+            }
+
+            70% {
+                transform: translate(-50%, 0) scale(0.9);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translate(-50%, 0) scale(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes notificationDisappear {
+            0% {
+                transform: translate(-50%, 0) scale(1);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translate(-50%, 0) scale(0);
+                opacity: 0;
+            }
+        }
+
+        .notification.show {
+            animation: notificationAppear 0.5s forwards, notificationDisappear 0.5s forwards 1.5s;
+        }
+
+        /* Clase para notificaciones con duración extendida (6 segundos) */
+        .notification.show-extended {
+            animation: notificationAppear 0.5s forwards, notificationDisappear 0.5s forwards 6s;
+        }
+
+        /* Estilos para el buscador de equipos */
+        .search-container {
+            position: relative;
+            margin-bottom: 20px;
+            width: 100%;
+            max-width: 400px;
+            margin: 10px auto 20px; /* Adjusted margin-top */
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 40px 12px 15px;
+            font-size: 16px;
+            border-radius: 25px;
+            border: 2px solid #9747FF; /* Changed from green to purple */
+            background-color: #2a2a2a;
+            color: white;
+            font-family: 'DINPRO', sans-serif;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        .search-input:focus {
+            outline: none;
+            box-shadow: 0 0 8px rgba(151, 71, 255, 0.6); /* Changed from green to purple */
+            border-color: #7030A0; /* Darker purple for focus */
+        }
+
+        .search-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .clear-search-btn {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 5px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .clear-search-btn.visible {
+            opacity: 1;
+            visibility: visible;
+            animation: rotateIn 0.3s ease forwards;
+        }
+
+        @keyframes rotateIn {
+            0% {
+                transform: translateY(-50%) rotate(-90deg) scale(0.5);
+            }
+
+            100% {
+                transform: translateY(-50%) rotate(0deg) scale(1);
+            }
+        }
+
+        .clear-search-btn.rotating-out {
+            animation: rotateOut 0.2s ease forwards;
+        }
+
+        @keyframes rotateOut {
+            0% {
+                transform: translateY(-50%) rotate(0deg) scale(1);
+            }
+
+            100% {
+                transform: translateY(-50%) rotate(90deg) scale(0.5);
+                opacity: 0;
+            }
+        }
+
+        .clear-search-btn:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .clear-search-btn:hover .clear-icon {
+            transform: rotate(90deg);
+        }
+
+        .clear-search-btn:active {
+            transform: translateY(-50%) scale(0.95);
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .clear-icon {
+            width: 14px;
+            height: 14px;
+            fill: none;
+            transition: all 0.3s ease;
+        }
+
+        .team-item.hidden,
+        .selection-item.hidden {
+            display: none;
+        }
+
+        .league-section.hidden,
+        .selection-section.hidden {
+            display: none;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 20px;
+            font-family: 'DINPRO-BOLDITALIC', sans-serif;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 18px;
+            display: none;
+        }
+
+        .no-results.visible {
+            display: block;
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        /* Estilos para el modal de personalización */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .modal.show {
+            display: flex;
+            animation: fadeIn 0.3s ease forwards;
+        }
+
+        .modal-content {
+            background-color: #1D1D1D;
+            border: 2px solid #9747FF; /* Changed from green to purple */
+            border-radius: 15px;
+            width: 74%;
+            max-width: 740px;
+            max-height: 76vh;
+            overflow-y: auto;
+            padding: 30px;
+            padding-right: 40px;
+            position: relative;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+            margin: 0 auto;
+            box-sizing: border-box;
+        }
+
+        /* Personalización de la barra de desplazamiento */
+        .modal-content::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .modal-content::-webkit-scrollbar-track {
+            background: transparent;
+            margin: 5px;
+        }
+
+        .modal-content::-webkit-scrollbar-thumb {
+            background: rgba(151, 71, 255, 0.7); /* Changed from green to purple */
+            border-radius: 10px;
+        }
+
+        .modal-content::-webkit-scrollbar-thumb:hover {
+            background: rgba(112, 48, 160, 0.9); /* Darker purple for hover */
+        }
+
+        /* Estilos para el pie de página */
+        .footer {
+            margin-top: auto;
+            padding: 15px 0;
+            font-family: 'DINPRO-LIGHTITALIC', sans-serif;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.7);
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            width: 100%;
+            position: relative;
+            bottom: 0;
+            transition: all 0.5s ease;
+            animation: footerGlow 3s ease-in-out infinite alternate;
+        }
+
+        /* Animación para el pie de página */
+        @keyframes footerGlow {
+            from {
+                box-shadow: 0 -2px 10px rgba(151, 71, 255, 0); /* Changed from green to purple */
+            }
+
+            to {
+                box-shadow: 0 -2px 10px rgba(151, 71, 255, 0.5); /* Changed from green to purple */
+            }
+        }
+
+        /* Estilo para el enlace de Instagram */
+        .instagram-link {
+            color: #9747FF; /* Changed from green to purple */
+            text-decoration: none;
+            border-bottom: 1px dotted #9747FF; /* Changed from green to purple */
+            transition: all 0.3s ease;
+            position: relative;
+            display: inline-block;
+        }
+
+        .instagram-link:hover {
+            color: white;
+            border-bottom: 1px solid white;
+            transform: translateY(-2px);
+            text-shadow: 0 0 8px rgba(151, 71, 255, 0.8); /* Changed from green to purple */
+        }
+
+        .close-modal-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 40px;
+            height: 40px;
+            background-color: #9747FF; /* Changed from green to purple */
+            border: none;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+            z-index: 10;
+            padding: 0;
+        }
+
+        .close-modal-btn:hover {
+            background-color: #7030A0; /* Darker purple for hover */
+            transform: scale(1.1);
+        }
+
+        .close-icon {
+            width: 20px;
+            height: 20px;
+            filter: brightness(0) invert(1);
+        }
+
+        .modal-content h2 {
+            font-family: 'CruyffSansExpanded-Heavy', sans-serif;
+            color: white;
+            text-align: center;
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-size: 28px;
+        }
+
+        .select-all-container {
+            margin-bottom: 20px;
+            padding: 10px;
+            background-color: #2a2a2a;
+            border-radius: 10px;
+        }
+
+        .select-all-container label {
+            display: flex;
+            align-items: center;
+            font-family: 'CruyffSansExpanded-Heavy', sans-serif;
+            font-size: 18px;
+            color: white;
+            cursor: pointer;
+            gap: 10px;
+        }
+
+        /* Estilos para los botones de navegación */
+        .nav-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 10px; /* Adjusted margin-bottom */
+        }
+
+        .nav-btn {
+            padding: 10px 20px;
+            font-size: 18px;
+            font-family: 'CruyffSansExpanded-Heavy', sans-serif; /* Changed font */
+            border-radius: 8px;
+            border: none;
+            background-color: #333;
+            color: white;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .nav-btn.active {
+            background-color: #9747FF; /* Changed from green to purple */
+            transform: scale(1.05);
+        }
+
+        .nav-btn:hover:not(.active) {
+            background-color: #444;
+        }
+
+        /* Estilos para las secciones de contenido */
+        .content-section {
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        /* Estilos para selecciones */
+        .selections-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .selection-section {
+            background-color: #2a2a2a;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .selection-section:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .selection-header {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #444;
+            gap: 15px;
+            justify-content: flex-start;
+        }
+
+        .selection-header h3 {
+            font-family: 'CruyffSansExpanded-Heavy', sans-serif;
+            font-size: 20px;
+            margin: 0;
+            color: white;
+            flex-grow: 1;
+            text-align: left;
+        }
+
+        .selection-header label {
+            display: flex;
+            align-items: center;
+            font-family: 'Rifton Norm', sans-serif;
+            font-size: 16px;
+            color: white;
+            cursor: pointer;
+            gap: 8px;
+            margin-left: auto;
+        }
+
+        .confederation-logo {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
+            margin-right: 10px;
+            filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.3));
+        }
+
+        .selections-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 10px;
+            max-height: 300px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        /* Specific style for UEFA selections list to make it larger */
+        #europauefa-selections {
+            max-height: 450px;
+        }
+
+        .selection-item {
+            padding: 8px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .selection-item:hover {
+            background-color: rgba(151, 71, 255, 0.1); /* Changed from green to purple */
+            transform: translateY(-2px);
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        .selection-item label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            gap: 10px;
+            width: 100%;
+        }
+
+        /* Estilo para los escudos de selecciones (anteriormente banderas) */
+        .selection-escudo {
+            width: 30px;
+            height: 30px;
+            object-fit: contain;
+            border-radius: 50%;
+            border: 1px solid #ffffff;
+            background-color: #ffffff;
+        }
+
+        .selection-name {
+            font-family: 'CruyffSansExpanded-Heavy', sans-serif;
+            font-size: 14px;
+            color: #ffffff;
+            flex-grow: 1;
+            text-align: left;
+        }
+
+        /* Estilo para los checkboxes de selecciones */
+        .selection-checkbox {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid white;
+            border-radius: 50%;
+            background-color: transparent;
+            cursor: pointer;
+            transition: background-color 0.3s ease, border-color 0.3s ease, transform 0.2s ease;
+            position: relative;
+        }
+
+        .selection-checkbox:checked {
+            background-color: #9747FF; /* Changed from green to purple */
+            border-color: #9747FF; /* Changed from green to purple */
+            transform: scale(1.1);
+        }
+
+        .selection-checkbox:active {
+            transform: scale(0.9);
+        }
+
+        .selection-checkbox:checked::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 10px;
+            height: 10px;
+            background-color: white;
+            border-radius: 50%;
+        }
+
+        /* Animación para las selecciones */
+        @keyframes selectionPulse {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.02);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .selection-item.selected {
+            animation: selectionPulse 0.5s ease;
+            background-color: rgba(151, 71, 255, 0.15); /* Changed from green to purple */
+            will-change: transform, background-color;
+        }
+
+        /* Estilos para contenedores existentes */
+        .leagues-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .league-section {
+            background-color: #2a2a2a;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .league-section:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .league-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #444;
+            gap: 15px;
+            justify-content: flex-start;
+        }
+
+        .league-logo {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
+            margin-right: 5px;
+        }
+
+        .league-header h3 {
+            font-family: 'CruyffSansExpanded-Heavy', sans-serif;
+            color: white;
+            margin: 0;
+            flex-grow: 1;
+            text-align: left;
+        }
+
+        .league-header label {
+            display: flex;
+            align-items: center;
+            font-family: 'Rifton Norm', sans-serif;
+            font-size: 16px;
+            color: white;
+            cursor: pointer;
+            gap: 8px;
+            margin-left: auto;
+        }
+
+        .teams-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 10px;
+            max-height: 300px;
+            overflow-y: auto;
+            padding-right: 10px;
+            padding-top: 2px;
+        }
+
+        .team-item {
+            padding: 8px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .team-item:hover {
+            background-color: rgba(151, 71, 255, 0.1); /* Changed from green to purple */
+            transform: translateY(-2px);
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        .team-item.selected {
+            animation: selectionPulse 0.5s ease;
+            background-color: rgba(151, 71, 255, 0.15); /* Changed from green to purple */
+            will-change: transform, background-color;
+        }
+
+        .team-item label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            gap: 10px;
+            width: 100%;
+        }
+
+        /* Estilo para los checkboxes de equipos */
+        .team-checkbox {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid white;
+            border-radius: 50%;
+            background-color: transparent;
+            cursor: pointer;
+            transition: background-color 0.3s ease, border-color 0.3s ease, transform 0.2s ease;
+            position: relative;
+        }
+
+        .team-checkbox:checked {
+            background-color: #9747FF; /* Changed from green to purple */
+            border-color: #9747FF; /* Changed from green to purple */
+            transform: scale(1.1);
+        }
+
+        .team-checkbox:active {
+            transform: scale(0.9);
+        }
+
+        .team-checkbox:checked::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 10px;
+            height: 10px;
+            background-color: white;
+            border-radius: 50%;
+        }
+
+        .team-logo {
+            width: 30px;
+            height: 30px;
+            object-fit: contain;
+            border-radius: 3px;
+        }
+
+        .team-name {
+            font-family: 'CruyffSansExpanded-Heavy', sans-serif;
+            font-size: 14px;
+            color: #ffffff;
+            flex-grow: 1;
+            text-align: left;
+        }
+
+        .modal-buttons {
+            display: flex;
+            justify-content: center;
+            position: fixed;
+            bottom: 10%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 300px;
+            background-color: transparent;
+            padding: 0;
+            z-index: 2001;
+        }
+
+        /* Media query para dispositivos móviles */
+        @media screen and (max-width: 768px) {
+            .modal-buttons {
+                bottom: 15%;
+                width: 80%;
+                max-width: 300px;
+            }
+        }
+
+        /* Media query para dispositivos muy pequeños */
+        @media screen and (max-width: 480px) {
+            .modal-buttons {
+                bottom: 20%;
+            }
+        }
+
+        .save-button {
+            background-color: #9747FF; /* Changed from green to purple */
+            color: white;
+            font-family: 'DINPRO-BOLDITALIC', sans-serif;
+            font-size: 22px;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+            width: 100%;
+            text-align: center;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+        }
+
+        /* Ajuste para dispositivos móviles */
+        @media screen and (max-width: 480px) {
+            .save-button {
+                font-size: 18px;
+                padding: 10px 20px;
+            }
+        }
+
+        .save-button:hover {
+            background-color: #7030A0; /* Darker purple for hover */
+            transform: scale(1.03);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.6);
+        }
+
+        .save-button:active {
+            transform: scale(0.98);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+        }
+
+        /* Estilo para el contenido principal cuando el modal está activo */
+        body.blur-background>*:not(.modal):not(.notification) {
+            filter: blur(5px);
+            transition: filter 0.3s ease;
+            transform: none !important;
+        }
+
+        /* Asegurar que el menú y botones no se muevan cuando hay blur */
+        body.blur-background .menu-container,
+        body.blur-background .personalized-btn,
+        body.blur-background .match-generator-btn { /* Added match-generator-btn */
+            transform: none !important;
+            transition: filter 0.3s ease;
+        }
+
+        /* Asegurar que el modal y las notificaciones estén por encima del contenido difuminado */
+        .modal,
+        .notification {
+            z-index: 2000;
+        }
+
+        /* Estilo para el contenido principal cuando el modal está activo */
+        body.blur-background>*:not(.modal):not(.notification) {
+            transform: none !important;
+        }
+
+        /* Asegurar que los botones no se muevan cuando hay blur */
+        body.blur-background .menu-btn {
+            position: fixed !important;
+            top: 20px !important;
+            left: 20px !important;
+        }
+
+        body.blur-background .personalized-btn {
+            position: fixed !important;
+            top: 20px !important;
+            right: 20px !important;
+            left: auto !important;
+        }
+
+        body.blur-background .match-generator-btn { /* Added match-generator-btn */
+            position: fixed !important;
+            top: 90px !important; /* Adjusted position */
+            right: 20px !important;
+            left: auto !important;
+        }
+
+        /* Estilo para los checkboxes personalizados */
+        input[type="checkbox"] {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid white;
+            border-radius: 50%;
+            background-color: transparent;
+            cursor: pointer;
+            transition: background-color 0.3s ease, border-color 0.3s ease, transform 0.2s ease;
+            position: relative;
+        }
+
+        input[type="checkbox"]:checked {
+            background-color: #9747FF; /* Changed from green to purple */
+            border-color: #9747FF; /* Changed from green to purple */
+            transform: scale(1.1);
+        }
+
+        input[type="checkbox"]:active {
+            transform: scale(0.9);
+        }
+
+        input[type="checkbox"]:checked::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 10px;
+            height: 10px;
+            background-color: white;
+            border-radius: 50%;
+        }
+
+        /* Scrollbar personalizada para las listas de equipos y el modal */
+        .teams-list::-webkit-scrollbar,
+        .modal-content::-webkit-scrollbar,
+        .selections-list::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .teams-list::-webkit-scrollbar-track,
+        .modal-content::-webkit-scrollbar-track,
+        .selections-list::-webkit-scrollbar-track {
+            background: #1D1D1D;
+            border-radius: 10px;
+        }
+
+        .teams-list::-webkit-scrollbar-thumb,
+        .modal-content::-webkit-scrollbar-thumb,
+        .selections-list::-webkit-scrollbar-thumb {
+            background: #9747FF; /* Changed from green to purple */
+            border-radius: 10px;
+        }
+
+        .teams-list::-webkit-scrollbar-thumb:hover,
+        .modal-content::-webkit-scrollbar-thumb:hover,
+        .selections-list::-webkit-scrollbar-thumb:hover {
+            background: #7030A0; /* Darker purple for hover */
+        }
+
+        /* Media Queries para Responsive Design */
+        @media (max-width: 768px) {
+
+            /* Estilos generales para tablets */
+            body {
+                padding: 0 10px;
+            }
+
+            h1 {
+                font-size: 2.5em;
+                margin-top: 60px;
+                margin-bottom: 40px;
+            }
+
+            button {
+                font-size: 20px;
+                padding: 10px 20px;
+            }
+
+            .equipo-container {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            /* Ajustes para el modal de personalización */
+            .modal-content {
+                width: 90%;
+                padding: 20px;
+                max-height: 80vh;
+            }
+
+            .league-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            /* Ajustes para el botón de guardar */
+            .modal-buttons {
+                width: 80%;
+                bottom: 15%;
+            }
+
+            /* Ajustes para los controles de volumen (si existen) */
+            .volume-control {
+                width: 250px;
+            }
+
+            /* Ajustes para las listas de equipos */
+            .teams-list,
+            .selections-list {
+                max-height: 250px;
+            }
+
+            /* Adjust UEFA section for smaller screens */
+            #europauefa-selections {
+                max-height: 350px;
+            }
+
+            /* Ajustes para los botones de menú */
+            .menu-btn,
+            .personalized-btn,
+            .match-generator-btn { /* Added match-generator-btn */
+                width: 50px;
+                height: 50px;
+            }
+
+            .match-generator-btn {
+                top: 75px; /* Adjusted position for smaller screens */
+            }
+        }
+
+        @media (max-width: 480px) {
+
+            /* Estilos para móviles */
+            h1 {
+                font-size: 2em;
+                margin-top: 40px;
+                margin-bottom: 30px;
+            }
+
+            button {
+                font-size: 18px;
+                padding: 8px 16px;
+            }
+
+            .equipo {
+                height: 200px;
+                width: 200px;
+            }
+
+            .escudo {
+                width: 150px;
+                height: 150px;
+            }
+
+            .nombre-equipo {
+                font-size: 20px;
+            }
+
+            /* Hacer el modal aún más compacto */
+            .modal-content {
+                padding: 10px;
+            }
+
+            .league-header h3 {
+                font-size: 16px;
+            }
+
+            /* Ajustar tamaño de botones para pantallas muy pequeñas */
+            .menu-btn,
+            .personalized-btn,
+            .patch-notes-btn,
+            .match-generator-btn { /* Added match-generator-btn */
+                width: 40px;
+                height: 40px;
+            }
+
+            .patch-notes-icon {
+                width: 20px;
+                height: 20px;
+            }
+
+            /* Ajustes para los botones de menú */
+            .menu-btn,
+            .personalized-btn,
+            .match-generator-btn { /* Added match-generator-btn */
+                width: 45px;
+                height: 45px;
+                top: 10px;
+            }
+
+            .menu-btn {
+                left: 10px;
+            }
+
+            .personalized-btn {
+                right: 10px;
+            }
+
+            .match-generator-btn { /* Added match-generator-btn */
+                top: 65px; /* Adjusted position for very small screens */
+                right: 10px;
+            }
+
+
+            .menu-btn img,
+            .personalized-btn img,
+            .match-generator-btn img { /* Added match-generator-btn */
+                width: 25px;
+                height: 25px;
+            }
+
+            /* Ajustes para el menú desplegable */
+            .menu-btn:hover+.menu,
+            .menu:hover {
+                width: 250px;
+                padding: 15px 10px 10px 10px;
+                top: 0;
+                left: 0;
+                position: fixed;
+                margin-top: 10px;
+                margin-left: 10px;
+                z-index: 1500;
+                background-color: rgba(112, 48, 160, 0.95); /* Darker purple with opacity */
+            }
+
+            /* Añadir un pequeño retraso para evitar cierres accidentales */
+            .menu {
+                transition: all 0.4s ease;
+            }
+
+            .menu label {
+                font-size: 16px;
+                margin-left: 60px;
+            }
+
+            /* Ajuste para evitar que el menú se sobreponga al título */
+            h1 {
+                z-index: 1;
+                position: relative;
+                margin-top: 100px;
+            }
+
+            /* Ajustes para el botón de guardar */
+            .save-button {
+                font-size: 18px;
+                padding: 10px 20px;
+            }
+
+            /* Ajustes para las notificaciones */
+            .notification {
+                font-size: 24px;
+                padding: 10px 20px;
+                bottom: 5%;
+            }
+
+            /* Ajustes para el botón de volumen si existe */
+            .volume-btn {
+                width: 45px;
+                height: 45px;
+                top: 10px;
+                right: 65px;
+            }
+
+            /* Ajustes para el control de volumen */
+            .volume-control {
+                width: 200px;
+                right: 65px;
+            }
+
+            /* Adjust UEFA section for very small screens */
+            #europauefa-selections {
+                max-height: 300px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="notification" id="appliedNotification">Aplicado</div>
+    <div class="notification" id="teamGeneratedNotification">Equipo Seleccionado</div> <div class="menu-container">
+        <div class="menu-btn">
+            <img src="logos/menu-hamburguesa.svg" alt="Menú" width="30" height="30">
+        </div>
+
+        <nav class="menu">
+            <form id="menuForm">
+                <label>
+                    <input type="checkbox" name="topClubs" checked>
+                    Top 20 Equipos
+                </label>
+                <label>
+                    <input type="checkbox" name="big5">
+                    Top 5 Grandes Ligas
+                </label>
+                <label>
+                    <input type="checkbox" name="top10Countries">
+                    Top 10 Países
+                </label>
+            </form>
+        </nav>
+    </div>
+
+    <div class="personalized-btn">
+        <img src="logos/personalized.svg" alt="Personalizar equipos" width="30" height="30">
+    </div>
+
+    <div class="match-generator-btn" onclick="window.location.href='https://impaul17.github.io/fcmatchgenerator/'">
+        <img src="logo%20trans%20(fmg).png" alt="FC Match Generator" class="match-generator-icon">
+    </div>
+
+    <main>
+        <h1>FC Team Generator</h1> <button onclick="generarEquipoUnico()">Generar Equipo</button> <div class="equipo-container">
+            <div class="equipo" id="equipo1"></div>
+        </div>
+    </main>
+
+    <div id="personalizationModal" class="modal">
+        <div class="modal-content">
+            <button id="closeModalBtn" class="close-modal-btn">
+                <img src="logos/cruz.svg" alt="Close" class="close-icon">
+            </button>
+            <h2>Personalizar</h2>
+
+            <div class="nav-buttons">
+                <button id="equiposBtn" class="nav-btn active">Equipos</button>
+                <button id="seleccionesBtn" class="nav-btn">Selecciones</button>
+            </div>
+
+            <div id="equiposContent" class="content-section active">
+                <div class="search-container">
+                    <input type="text" id="teamSearchInput" placeholder="Buscar equipo..." class="search-input">
+                    <button id="clearSearchBtn" class="clear-search-btn">
+                        <svg class="clear-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <line x1="6" y1="6" x2="18" y2="18" stroke="#FFFFFF" stroke-width="2"
+                                stroke-linecap="round" />
+                            <line x1="18" y1="6" x2="6" y2="18" stroke="#FFFFFF" stroke-width="2"
+                                stroke-linecap="round" />
+                        </svg>
+                    </button>
+                </div>
+                <div class="select-all-container">
+                    <label>
+                        <input type="checkbox" id="selectAllTeams">
+                        Seleccionar/Deseleccionar Todos Los Equipos
+                    </label>
+                </div>
+                <div id="noResultsMessage" class="no-results">
+                    No se encontraron equipos que coincidan con tu búsqueda
+                </div>
+                <div class="leagues-container" id="leagues-container">
+                    </div>
+            </div>
+
+            <div id="seleccionesContent" class="content-section">
+                <div class="search-container">
+                    <input type="text" id="selectionSearchInput" placeholder="Buscar selección..." class="search-input">
+                    <button id="clearSelectionSearchBtn" class="clear-search-btn">
+                        <svg class="clear-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <line x1="6" y1="6" x2="18" y2="18" stroke="#FFFFFF" stroke-width="2"
+                                stroke-linecap="round" />
+                            <line x1="18" y1="6" x2="6" y2="18" stroke="#FFFFFF" stroke-width="2"
+                                stroke-linecap="round" />
+                        </svg>
+                    </button>
+                </div>
+                <div class="select-all-container">
+                    <label>
+                        <input type="checkbox" id="selectAllSelections">
+                        Seleccionar/Deseleccionar Todas Las Selecciones
+                    </label>
+                </div>
+                <div id="noSelectionsResultsMessage" class="no-results">
+                    No se encontraron selecciones que coincidan con tu búsqueda
+                </div>
+                <div class="selections-container" id="selections-container">
+                    </div>
+            </div>
+
+            <div class="modal-buttons">
+                <button id="savePersonalization" class="save-button">Guardar</button>
+            </div>
+        </div>
+    </div>
+
+    <audio id="sonidoClick" src="sonidos/click.wav"></audio>
+    <audio id="sonidoFinal1" src="sonidos/victoria.wav"></audio>
+
+    <script>
+        // Datos unificados de todos los equipos y selecciones
+        const allTeamsData = [
+            // Liga EA Sports
+            { nombre: "Alavés", escudo: "https://upload.wikimedia.org/wikipedia/en/f/f8/Deportivo_Alaves_logo_%282020%29.svg", league: "Liga EA Sports (ES)", type: "club", isWhiteLogo: false },
+            { nombre: "Athletic", escudo: "https://upload.wikimedia.org/wikipedia/en/9/98/Club_Athletic_Bilbao_logo.svg", league: "Liga EA Sports (ES)", type: "club", isWhiteLogo: false },
+            { nombre: "Atleti", escudo: "https://upload.wikimedia.org/wikipedia/en/f/f9/Atletico_Madrid_Logo_2024.svg", league: "Liga EA Sports (ES)", type: "club", isWhiteLogo: false, isTopClub: true },
+            { nombre: "Barcelona", escudo: "https://upload.wikimedia.org/wikipedia/en/4/47/FC_Barcelona_%28crest%29.svg", league: "Liga EA Sports (ES)", type: "club", isWhiteLogo: false, isTopClub: true },
+            { nombre: "Betis", escudo: "https://upload.wikimedia.org/wikipedia/en/1/13/Real_betis_logo.svg", league: "Liga EA Sports (ES)", type: "club", isWhiteLogo: false },
+            { nombre: "Celta", escudo: "https://upload.wikimedia.org/wikipedia/en/1/12/RC_Celta_de_Vigo_logo.svg", league: "Liga EA Sports (ES)", type: "club", isWhiteLogo: false },
+            { nombre: "Espanyol", escudo: "https://upload.wikimedia.org/wikipedia/en/9/92/RCD_Espanyol_crest.svg", league: "Liga EA Sports (ES)", type: "club", isWhiteLogo: false },
+            { nombre: "Getafe", escudo: "https://upload.wikimedia.org/wikipedia/en/4/46/Getafe_logo.svg", league: "Liga EA Sports (ES)", type: "club", isWhiteLogo: false },
+            { nombre: "Girona", escudo: "https://upload.wikimedia.org/wikipedia/en/f/f7/Girona_FC_Logo.svg", league: "Liga EA Sports (ES)", type: "club", isWhiteLogo: false },
+            { nombre: "Leganés", escudo: "https://upload.wikimedia.org/wikipedia/en/b/b8/Club_Deportivo_Legan%C3%A9s_logo.svg", league: "Liga EA Sports (ES)", type: "club", isWhiteLogo: false },
+            { nombre: "Mallorca", escudo: "https://upload.wikimedia.org/wikipedia/en/e/e0/Rcd_mallorca.svg", league: "Liga EA Sports (ES)", type: "club", isWhiteLogo: false },
+            { nombre: "Osasuna", escudo: "https://upload.wikimedia.org/wikipedia/en/3/38/CA_Osasuna_2024_crest.svg", league: "Liga EA Sports (ES)", type: "club", isWhiteLogo: false },
+            { nombre: "Rayo", escudo: "https://upload.wikimedia.org/wikipedia/en/d/d8/Rayo_Vallecano_logo.svg", league: "Liga EA Sports (ES)", type: "club", isWhiteLogo: false },
+            { nombre: "Real Madrid", escudo: "https://upload.wikimedia.org/wikipedia/en/5/56/Real_Madrid_CF.svg", league: "Liga EA Sports (ES)", type: "club", isWhiteLogo: false, isTopClub: true },
+            { nombre: "Real Sociedad", escudo: "https://upload.wikimedia.org/wikipedia/en/f/f1/Real_Sociedad_logo.svg", league: "Liga EA Sports (ES)", type: "club", isWhiteLogo: false },
+            { nombre: "Sevilla", escudo: "https://upload.wikimedia.org/wikipedia/en/3/3b/Sevilla_FC_logo.svg", league: "Liga EA Sports (ES)", type: "club", isWhiteLogo: false },
+            { nombre: "Las Palmas", escudo: "https://upload.wikimedia.org/wikipedia/en/2/20/UD_Las_Palmas_logo.svg", league: "Liga EA Sports (ES)", type: "club", isWhiteLogo: false },
+            { nombre: "Valencia", escudo: "https://upload.wikimedia.org/wikipedia/en/c/ce/Valenciacf.svg", league: "Liga EA Sports (ES)", type: "club", isWhiteLogo: false },
+            { nombre: "Valladolid", escudo: "https://upload.wikimedia.org/wikipedia/en/a/a9/Real_Valladolid_CF_crest.svg", league: "Liga EA Sports (ES)", type: "club", isWhiteLogo: false },
+            { nombre: "Villarreal", escudo: "https://upload.wikimedia.org/wikipedia/en/b/b9/Villarreal_CF_logo-en.svg", league: "Liga EA Sports (ES)", type: "club", isWhiteLogo: false },
+
+            // Liga Hypermotion
+            { nombre: "Albacete", escudo: "https://cdn.worldvectorlogo.com/logos/albacete.svg", league: "Liga Hypermotion (ES)", type: "club", isWhiteLogo: false },
+            { nombre: "Almería", escudo: "https://upload.wikimedia.org/wikipedia/en/4/4a/UD_Almeria_logo.svg", league: "Liga Hypermotion (ES)", type: "club", isWhiteLogo: false },
+            { nombre: "Burgos", escudo: "https://statics-maker.llt-services.com/bur/images/2022/11/28/watermarked/409ec8a7-6fb4-4412-bd83-cf1ee1525207-753.png", league: "Liga Hypermotion (ES)", type: "club", isWhiteLogo: false },
+            { nombre: "Cádiz", escudo: "https://upload.wikimedia.org/wikipedia/en/5/58/C%C3%A1diz_CF_logo.svg", league: "Liga Hypermotion (ES)", type: "club", isWhiteLogo: false },
+            { nombre: "Castellón", escudo: "https://upload.wikimedia.org/wikipedia/en/f/f5/Logo_of_CD_Castell%C3%B3n.svg", league: "Liga Hypermotion (ES)", type: "club", isWhiteLogo: false },
+            { nombre: "Eldense", escudo: "https://upload.wikimedia.org/wikipedia/de/a/a7/Club_Deportivo_Eldense.svg", league: "Liga Hypermotion (ES)", type: "club", isWhiteLogo: false },
+            { nombre: "Córdoba", escudo: "https://upload.wikimedia.org/wikipedia/fr/9/96/C%C3%B3rdoba_CF_logo.svg", league: "Liga Hypermotion (ES)", type: "club", isWhiteLogo: false },
+            { nombre: "Depor", escudo: "https://upload.wikimedia.org/wikipedia/min/4/4e/RC_Deportivo_La_Coru%C3%B1a_logo.svg", league: "Liga Hypermotion (ES)", type: "club", isWhiteLogo: false },
+            { nombre: "Eibar", escudo: "https://upload.wikimedia.org/wikipedia/en/3/3b/SD_Eibar_logo_2016.svg", league: "Liga Hypermotion (ES)", type: "club", isWhiteLogo: false },
+            { nombre: "Elche", escudo: "https://upload.wikimedia.org/wikipedia/an/a/a7/Elche_CF_logo.svg", league: "Liga Hypermotion (ES)", type: "club", isWhiteLogo: false },
+            { nombre: "Cartagena", escudo: "https://upload.wikimedia.org/wikipedia/de/3/33/FC_Cartagena.svg", league: "Liga Hypermotion (ES)", type: "club", isWhiteLogo: false },
+            { nombre: "Granada", escudo: "https://upload.wikimedia.org/wikipedia/en/d/d5/Logo_of_Granada_Club_de_F%C3%BAtbol.svg", league: "Liga Hypermotion (ES)", type: "club", isWhiteLogo: false },
+            { nombre: "Huesca", escudo: "https://upload.wikimedia.org/wikipedia/en/8/8a/Logo_of_SD_Huesca.svg", league: "Liga Hypermotion (ES)", type: "club", isWhiteLogo: false },
+            { nombre: "Levante", escudo: "https://upload.wikimedia.org/wikipedia/it/7/7b/Levante_Uni%C3%B3n_Deportiva%2C_S.A.D._logo.svg", league: "Liga Hypermotion (ES)", type: "club", isWhiteLogo: false },
+            { nombre: "Málaga", escudo: "https://upload.wikimedia.org/wikipedia/fr/9/93/Logo_M%C3%A1laga_CF.svg", league: "Liga Hypermotion (ES)", type: "club", isWhiteLogo: false },
+            { nombre: "Mirandés", escudo: "https://upload.wikimedia.org/wikipedia/an/b/b8/CD_Mirand%C3%A9s_logo.svg", league: "Liga Hypermotion (ES)", type: "club", isWhiteLogo: false },
+            { nombre: "Oviedo", escudo: "https://upload.wikimedia.org/wikipedia/an/6/6e/Real_Oviedo_logo.svg", league: "Liga Hypermotion (ES)", type: "club", isWhiteLogo: false },
+            { nombre: "R. Ferrol", escudo: "https://upload.wikimedia.org/wikipedia/commons/4/4c/Escudo_rcf.png", league: "Liga Hypermotion (ES)", type: "club", isWhiteLogo: false },
+            { nombre: "R. Santander", escudo: "https://upload.wikimedia.org/wikipedia/en/f/f5/Racing_de_Santander_logo.svg", league: "Liga Hypermotion (ES)", type: "club", isWhiteLogo: false },
+            { nombre: "Sporting", escudo: "https://upload.wikimedia.org/wikipedia/sco/4/48/Real_Sporting_de_Gijon.svg", league: "Liga Hypermotion (ES)", type: "club", isWhiteLogo: false },
+            { nombre: "Tenerife", escudo: "https://upload.wikimedia.org/wikipedia/de/f/f4/CD_Tenerife_Logo.svg", league: "Liga Hypermotion (ES)", type: "club", isWhiteLogo: false },
+            { nombre: "Zaragoza", escudo: "https://upload.wikimedia.org/wikipedia/fr/1/17/Real_Zaragoza_svg_logo.svg", league: "Liga Hypermotion (ES)", type: "club", isWhiteLogo: false },
+
+            // Premier League
+            { nombre: "Arsenal", escudo: "https://upload.wikimedia.org/wikipedia/en/5/53/Arsenal_FC.svg", league: "Premier League (EN)", type: "club", isWhiteLogo: false, isTopClub: true },
+            { nombre: "A. Villa", escudo: "https://upload.wikimedia.org/wikipedia/en/9/9a/Aston_Villa_FC_new_crest.svg", league: "Premier League (EN)", type: "club", isWhiteLogo: false },
+            { nombre: "Bournemouth", escudo: "https://upload.wikimedia.org/wikipedia/en/e/e5/AFC_Bournemouth_%282013%29.svg", league: "Premier League (EN)", type: "club", isWhiteLogo: false },
+            { nombre: "Brentford", escudo: "https://upload.wikimedia.org/wikipedia/en/2/2a/Brentford_FC_crest.svg", league: "Premier League (EN)", type: "club", isWhiteLogo: false },
+            { nombre: "Brighton", escudo: "https://upload.wikimedia.org/wikipedia/en/d/d0/Brighton_and_Hove_Albion_FC_crest.svg", league: "Premier League (EN)", type: "club", isWhiteLogo: false },
+            { nombre: "Chelsea", escudo: "https://upload.wikimedia.org/wikipedia/en/c/cc/Chelsea_FC.svg", league: "Premier League (EN)", type: "club", isWhiteLogo: false, isTopClub: true },
+            { nombre: "C. Palace", escudo: "https://upload.wikimedia.org/wikipedia/en/a/a2/Crystal_Palace_FC_logo_%282022%29.svg", league: "Premier League (EN)", type: "club", isWhiteLogo: false },
+            { nombre: "Everton", escudo: "https://upload.wikimedia.org/wikipedia/en/7/7c/Everton_FC_logo.svg", league: "Premier League (EN)", type: "club", isWhiteLogo: false },
+            { nombre: "Fulham", escudo: "https://upload.wikimedia.org/wikipedia/en/e/eb/Fulham_FC_%28shield%29.svg", league: "Premier League (EN)", type: "club", isWhiteLogo: false },
+            { nombre: "Ipswich", escudo: "https://upload.wikimedia.org/wikipedia/en/4/43/Ipswich_Town.svg", league: "Premier League (EN)", type: "club", isWhiteLogo: false },
+            { nombre: "Leicester", escudo: "https://upload.wikimedia.org/wikipedia/en/2/2d/Leicester_City_crest.svg", league: "Premier League (EN)", type: "club", isWhiteLogo: false },
+            { nombre: "Liverpool", escudo: "https://upload.wikimedia.org/wikipedia/en/0/0c/Liverpool_FC.svg", league: "Premier League (EN)", type: "club", isWhiteLogo: false, isTopClub: true },
+            { nombre: "City", escudo: "https://upload.wikimedia.org/wikipedia/en/e/eb/Manchester_City_FC_badge.svg", league: "Premier League (EN)", type: "club", isWhiteLogo: false, isTopClub: true },
+            { nombre: "United", escudo: "https://upload.wikimedia.org/wikipedia/en/7/7a/Manchester_United_FC_crest.svg", league: "Premier League (EN)", type: "club", isWhiteLogo: false, isTopClub: true },
+            { nombre: "Newcastle", escudo: "https://upload.wikimedia.org/wikipedia/en/5/56/Newcastle_United_Logo.svg", league: "Premier League (EN)", type: "club", isWhiteLogo: false },
+            { nombre: "Nottingham", escudo: "https://upload.wikimedia.org/wikipedia/en/e/e5/Nottingham_Forest_F.C._logo.svg", league: "Premier League (EN)", type: "club", isWhiteLogo: false },
+            { nombre: "Southampton", escudo: "https://upload.wikimedia.org/wikipedia/en/c/c9/FC_Southampton.svg", league: "Premier League (EN)", type: "club", isWhiteLogo: false },
+            { nombre: "Tottenham", escudo: "https://upload.wikimedia.org/wikipedia/en/b/b4/Tottenham_Hotspur.svg", league: "Premier League (EN)", type: "club", isWhiteLogo: true, isTopClub: true },
+            { nombre: "West Ham", escudo: "https://upload.wikimedia.org/wikipedia/en/c/c2/West_Ham_United_FC_logo.svg", league: "Premier League (EN)", type: "club", isWhiteLogo: false },
+            { nombre: "Wolves", escudo: "https://upload.wikimedia.org/wikipedia/en/c/c9/Wolverhampton_Wanderers_FC_crest.svg", league: "Premier League (EN)", type: "club", isWhiteLogo: false },
+
+            // Serie A
+            { nombre: "Atalanta", escudo: "https://upload.wikimedia.org/wikipedia/commons/8/81/Logo_Atalanta_Bergamo.svg", league: "Serie A (IT)", type: "club", isWhiteLogo: false },
+            { nombre: "Bologna", escudo: "https://upload.wikimedia.org/wikipedia/commons/5/5b/Bologna_F.C._1909_logo.svg", league: "Serie A (IT)", type: "club", isWhiteLogo: false },
+            { nombre: "Cagliari", escudo: "https://upload.wikimedia.org/wikipedia/en/6/61/Cagliari_Calcio_1920.svg", league: "Serie A (IT)", type: "club", isWhiteLogo: false },
+            { nombre: "Como", escudo: "https://upload.wikimedia.org/wikipedia/commons/f/f2/Logo_Como_1907_-_2019.svg", league: "Serie A (IT)", type: "club", isWhiteLogo: false },
+            { nombre: "Empoli", escudo: "https://upload.wikimedia.org/wikipedia/it/e/e4/Empoli_logo_2021.svg", league: "Serie A (IT)", type: "club", isWhiteLogo: false },
+            { nombre: "Fiorentina", escudo: "https://upload.wikimedia.org/wikipedia/commons/8/8c/ACF_Fiorentina_-_logo_%28Italy%2C_2022%29.svg", league: "Serie A (IT)", type: "club", isWhiteLogo: false },
+            { nombre: "Genoa", escudo: "https://upload.wikimedia.org/wikipedia/en/2/2c/Genoa_CFC_crest.svg", league: "Serie A (IT)", type: "club", isWhiteLogo: false },
+            { nombre: "Verona", escudo: "https://upload.wikimedia.org/wikipedia/en/9/92/Hellas_Verona_FC_logo_%282020%29.svg", league: "Serie A (IT)", type: "club", isWhiteLogo: true },
+            { nombre: "Inter", escudo: "https://upload.wikimedia.org/wikipedia/commons/0/05/FC_Internazionale_Milano_2021.svg", league: "Serie A (IT)", type: "club", isWhiteLogo: false, isTopClub: true },
+            { nombre: "Juventus", escudo: "https://upload.wikimedia.org/wikipedia/commons/4/4e/Juventus_FC_-_logo_black_%28Italy%2C_2017%29.svg", league: "Serie A (IT)", type: "club", isWhiteLogo: true, isTopClub: true },
+            { nombre: "Lazio", escudo: "https://upload.wikimedia.org/wikipedia/en/c/ce/S.S._Lazio_badge.svg", league: "Serie A (IT)", type: "club", isWhiteLogo: false },
+            { nombre: "Lecce", escudo: "https://upload.wikimedia.org/wikipedia/en/2/23/US_Lecce_crest.svg", league: "Serie A (IT)", type: "club", isWhiteLogo: false },
+            { nombre: "Milan", escudo: "https://upload.wikimedia.org/wikipedia/commons/d/d0/Logo_of_AC_Milan.svg", league: "Serie A (IT)", type: "club", isWhiteLogo: false, isTopClub: true },
+            { nombre: "Monza", escudo: "https://upload.wikimedia.org/wikipedia/it/6/65/Associazione_Calcio_Monza_%282019%29.svg", league: "Serie A (IT)", type: "club", isWhiteLogo: false },
+            { nombre: "Napoli", escudo: "https://upload.wikimedia.org/wikipedia/commons/0/00/SSC_Napoli_2024_%28deep_blue_navy%29.svg", league: "Serie A (IT)", type: "club", isWhiteLogo: true, isTopClub: false },
+            { nombre: "Parma", escudo: "https://upload.wikimedia.org/wikipedia/commons/9/97/Logo_Parma_Calcio_1913_%28adozione_2016%29.svg", league: "Serie A (IT)", type: "club", isWhiteLogo: false },
+            { nombre: "Roma", escudo: "https://upload.wikimedia.org/wikipedia/en/f/f7/AS_Roma_logo_%282017%29.svg", league: "Serie A (IT)", type: "club", isWhiteLogo: false, isTopClub: true },
+            { nombre: "Torino", escudo: "https://upload.wikimedia.org/wikipedia/en/2/2e/Torino_FC_Logo.svg", league: "Serie A (IT)", type: "club", isWhiteLogo: false },
+            { nombre: "Udinese", escudo: "https://upload.wikimedia.org/wikipedia/commons/5/5a/Udinese_Calcio_2010.svg", league: "Serie A (IT)", type: "club", isWhiteLogo: false },
+            { nombre: "Venezia", escudo: "https://upload.wikimedia.org/wikipedia/lt/7/7a/Venezia-fc.svg", league: "Serie A (IT)", type: "club", isWhiteLogo: false },
+
+            // Bundesliga
+            { nombre: "Augsburgo", escudo: "https://upload.wikimedia.org/wikipedia/en/c/c5/FC_Augsburg_logo.svg", league: "Bundesliga (AL)", type: "club", isWhiteLogo: false },
+            { nombre: "Leverkusen", escudo: "https://upload.wikimedia.org/wikipedia/en/5/59/Bayer_04_Leverkusen_logo.svg", league: "Bundesliga (AL)", type: "club", isWhiteLogo: false, isTopClub: true },
+            { nombre: "Bayern", escudo: "https://upload.wikimedia.org/wikipedia/commons/8/8d/FC_Bayern_M%C3%BCnchen_logo_%282024%29.svg", league: "Bundesliga (AL)", type: "club", isWhiteLogo: false, isTopClub: true },
+            { nombre: "Monchengladbach", escudo: "https://upload.wikimedia.org/wikipedia/commons/8/81/Borussia_M%C3%B6nchengladbach_logo.svg", league: "Bundesliga (AL)", type: "club", isWhiteLogo: false },
+            { nombre: "Bochum", escudo: "https://upload.wikimedia.org/wikipedia/commons/7/72/VfL_Bochum_logo.svg", league: "Bundesliga (AL)", type: "club", isWhiteLogo: false },
+            { nombre: "Dortmund", escudo: "https://upload.wikimedia.org/wikipedia/commons/6/67/Borussia_Dortmund_logo.svg", league: "Bundesliga (AL)", type: "club", isWhiteLogo: false, isTopClub: true },
+            { nombre: "Frankfurt", escudo: "https://upload.wikimedia.org/wikipedia/en/7/7e/Eintracht_Frankfurt_crest.svg", league: "Bundesliga (AL)", type: "club", isWhiteLogo: false },
+            { nombre: "Freiburg", escudo: "https://upload.wikimedia.org/wikipedia/en/6/6d/SC_Freiburg_logo.svg", league: "Bundesliga (AL)", type: "club", isWhiteLogo: false },
+            { nombre: "Heidenheim", escudo: "https://upload.wikimedia.org/wikipedia/commons/9/9d/1._FC_Heidenheim_1846.svg", league: "Bundesliga (AL)", type: "club", isWhiteLogo: false },
+            { nombre: "Hoffenheim", escudo: "https://upload.wikimedia.org/wikipedia/commons/e/e7/Logo_TSG_Hoffenheim.svg", league: "Bundesliga (AL)", type: "club", isWhiteLogo: false },
+            { nombre: "Holstein Kiel", escudo: "https://upload.wikimedia.org/wikipedia/commons/3/30/Holstein_Kiel_Logo.svg", league: "Bundesliga (AL)", type: "club", isWhiteLogo: false },
+            { nombre: "Mainz", escudo: "https://upload.wikimedia.org/wikipedia/commons/9/9e/Logo_Mainz_05.svg", league: "Bundesliga (AL)", type: "club", isWhiteLogo: false },
+            { nombre: "Leipzig", escudo: "https://upload.wikimedia.org/wikipedia/en/0/04/RB_Leipzig_2014_logo.svg", league: "Bundesliga (AL)", type: "club", isWhiteLogo: false, isTopClub: true },
+            { nombre: "St. Pauli", escudo: "https://upload.wikimedia.org/wikipedia/commons/b/b3/Fc_st_pauli_logo.svg", league: "Bundesliga (AL)", type: "club", isWhiteLogo: false },
+            { nombre: "Stuttgart", escudo: "https://upload.wikimedia.org/wikipedia/commons/e/eb/VfB_Stuttgart_1893_Logo.svg", league: "Bundesliga (AL)", type: "club", isWhiteLogo: false },
+            { nombre: "Union Berlin", escudo: "https://upload.wikimedia.org/wikipedia/commons/4/44/1._FC_Union_Berlin_Logo.svg", league: "Bundesliga (AL)", type: "club", isWhiteLogo: false },
+            { nombre: "Werder Bremen", escudo: "https://upload.wikimedia.org/wikipedia/commons/b/be/SV-Werder-Bremen-Logo.svg", league: "Bundesliga (AL)", type: "club", isWhiteLogo: false },
+            { nombre: "Wolfsburgo", escudo: "https://upload.wikimedia.org/wikipedia/commons/c/ce/VfL_Wolfsburg_Logo.svg", league: "Bundesliga (AL)", type: "club", isWhiteLogo: false },
+
+            // Ligue 1
+            { nombre: "Angers", escudo: "https://upload.wikimedia.org/wikipedia/fr/d/d3/Logo_Angers_SCO_-_2021.svg", league: "Ligue 1 (FR)", type: "club", isWhiteLogo: false },
+            { nombre: "Auxerre", escudo: "https://upload.wikimedia.org/wikipedia/en/5/51/AJAuxerreLogo.svg", league: "Ligue 1 (FR)", type: "club", isWhiteLogo: false },
+            { nombre: "Le Havre", escudo: "https://upload.wikimedia.org/wikipedia/fr/e/e6/Logo_Havre_AC_2012.svg", league: "Ligue 1 (FR)", type: "club", isWhiteLogo: false },
+            { nombre: "Lille", escudo: "https://upload.wikimedia.org/wikipedia/fr/6/62/Logo_LOSC_Lille_2018.svg", league: "Ligue 1 (FR)", type: "club", isWhiteLogo: false },
+            { nombre: "Monaco", escudo: "https://upload.wikimedia.org/wikipedia/en/c/cf/LogoASMonacoFC2021.svg", league: "Ligue 1 (FR)", type: "club", isWhiteLogo: false },
+            { nombre: "Montpellier", escudo: "https://upload.wikimedia.org/wikipedia/en/a/a8/Montpellier_HSC_logo.svg", league: "Ligue 1 (FR)", type: "club", isWhiteLogo: false },
+            { nombre: "Nantes", escudo: "https://upload.wikimedia.org/wikipedia/commons/4/45/Logo_FC_Nantes_%28avec_fond%29_-_2019.svg", league: "Ligue 1 (FR)", type: "club", isWhiteLogo: false },
+            { nombre: "Niza", escudo: "https://upload.wikimedia.org/wikipedia/fr/0/04/Logo_OGC_Nice_2023.svg", league: "Ligue 1 (FR)", type: "club", isWhiteLogo: false },
+            { nombre: "Marsella", escudo: "https://upload.wikimedia.org/wikipedia/commons/d/d8/Olympique_Marseille_logo.svg", league: "Ligue 1 (FR)", type: "club", isWhiteLogo: false, isTopClub: true },
+            { nombre: "Lyon", escudo: "https://upload.wikimedia.org/wikipedia/en/1/1c/Olympique_Lyonnais_logo.svg", league: "Ligue 1 (FR)", type: "club", isWhiteLogo: false, isTopClub: true },
+            { nombre: "PSG", escudo: "https://upload.wikimedia.org/wikipedia/en/a/a7/Paris_Saint-Germain_F.C..svg", league: "Ligue 1 (FR)", type: "club", isWhiteLogo: false, isTopClub: true },
+            { nombre: "Estrasburgo", escudo: "https://upload.wikimedia.org/wikipedia/en/8/80/Racing_Club_de_Strasbourg_logo.svg", league: "Ligue 1 (FR)", type: "club", isWhiteLogo: false },
+            { nombre: "Lens", escudo: "https://upload.wikimedia.org/wikipedia/en/c/cc/RC_Lens_logo.svg", league: "Ligue 1 (FR)", type: "club", isWhiteLogo: false },
+            { nombre: "Rennes", escudo: "https://upload.wikimedia.org/wikipedia/fr/e/e9/Logo_Stade_Rennais_FC.svg", league: "Ligue 1 (FR)", type: "club", isWhiteLogo: false },
+            { nombre: "Saint-Étienne", escudo: "https://upload.wikimedia.org/wikipedia/en/2/25/AS_Saint-%C3%89tienne_logo.svg", league: "Ligue 1 (FR)", type: "club", isWhiteLogo: false },
+            { nombre: "Brest", escudo: "https://upload.wikimedia.org/wikipedia/en/0/05/Stade_Brestois_29_logo.svg", league: "Ligue 1 (FR)", type: "club", isWhiteLogo: false },
+            { nombre: "Reims", escudo: "https://upload.wikimedia.org/wikipedia/commons/0/04/Stade_Reims.svg", league: "Ligue 1 (FR)", type: "club", isWhiteLogo: true },
+            { nombre: "Toulouse", escudo: "https://upload.wikimedia.org/wikipedia/fr/8/8b/Logo_Toulouse_FC_2018.svg", league: "Ligue 1 (FR)", type: "club", isWhiteLogo: false },
+
+            // EREDIVISIE
+            { nombre: "Ajax", escudo: "https://upload.wikimedia.org/wikipedia/sco/7/79/Ajax_Amsterdam.svg", league: "Eredivisie (PB)", type: "club", isWhiteLogo: false, isTopClub: false },
+            { nombre: "AZ", escudo: "https://upload.wikimedia.org/wikipedia/commons/e/e0/AZ_Alkmaar.svg", league: "Eredivisie (PB)", type: "club", isWhiteLogo: false },
+            { nombre: "Groningen", escudo: "https://upload.wikimedia.org/wikipedia/en/2/2c/FC_Groningen_logo.svg", league: "Eredivisie (PB)", type: "club", isWhiteLogo: false },
+            { nombre: "Twente", escudo: "https://upload.wikimedia.org/wikipedia/en/e/e3/FC_Twente.svg", league: "Eredivisie (PB)", type: "club", isWhiteLogo: false },
+            { nombre: "Utrecht", escudo: "https://upload.wikimedia.org/wikipedia/commons/5/5d/Logo_FC_Utrecht.svg", league: "Eredivisie (PB)", type: "club", isWhiteLogo: false },
+            { nombre: "Feyenoord", escudo: "https://upload.wikimedia.org/wikipedia/commons/1/1a/Feyenoord_logo_since_2009.svg", league: "Eredivisie (PB)", type: "club", isWhiteLogo: false },
+            { nombre: "Fortuna Sittard", escudo: "https://upload.wikimedia.org/wikipedia/de/0/08/Fortuna_Sittard.svg", league: "Eredivisie (PB)", type: "club", isWhiteLogo: false },
+            { nombre: "Go Ahead", escudo: "https://upload.wikimedia.org/wikipedia/commons/d/d4/Go_Ahead_Eagles_logo.svg", league: "Eredivisie (PB)", type: "club", isWhiteLogo: false },
+            { nombre: "Heracles", escudo: "https://upload.wikimedia.org/wikipedia/fr/5/56/Heracles_Almelo_%28logo%29.svg", league: "Eredivisie (PB)", type: "club", isWhiteLogo: false },
+            { nombre: "N.E.C.", escudo: "https://upload.wikimedia.org/wikipedia/de/3/34/NEC_Nijmegen.svg", league: "Eredivisie (PB)", type: "club", isWhiteLogo: false },
+            { nombre: "Zwolle", escudo: "https://upload.wikimedia.org/wikipedia/en/f/f3/PEC_Zwolle_logo.svg", league: "Eredivisie (PB)", type: "club", isWhiteLogo: false },
+            { nombre: "PSV", escudo: "https://upload.wikimedia.org/wikipedia/sco/0/05/PSV_Eindhoven.svg", league: "Eredivisie (PB)", type: "club", isWhiteLogo: false },
+            { nombre: "Waalwijk", escudo: "https://upload.wikimedia.org/wikipedia/en/6/67/RKC_Waalwijk_logo.svg", league: "Eredivisie (PB)", type: "club", isWhiteLogo: false },
+            { nombre: "Heerenveen", escudo: "https://upload.wikimedia.org/wikipedia/de/e/e7/SC_Heerenveen.svg", league: "Eredivisie (PB)", type: "club", isWhiteLogo: false },
+            { nombre: "Cambuur", escudo: "https://upload.wikimedia.org/wikipedia/en/c/cb/SC_Cambuur_logo.svg", league: "Eredivisie (PB)", type: "club", isWhiteLogo: false },
+            { nombre: "S. Rotterdam", escudo: "https://upload.wikimedia.org/wikipedia/en/9/9f/Sparta_Rotterdam_logo.svg", league: "Eredivisie (PB)", type: "club", isWhiteLogo: false },
+            { nombre: "Vitesse", escudo: "https://upload.wikimedia.org/wikipedia/en/c/c8/SBV_Vitesse_logo.svg", league: "Eredivisie (PB)", type: "club", isWhiteLogo: false },
+            { nombre: "Willem II", escudo: "https://upload.wikimedia.org/wikipedia/en/7/77/Willem_II_logo.svg", league: "Eredivisie (PB)", type: "club", isWhiteLogo: false },
+
+            // MLS
+            { nombre: "Atlanta United", escudo: "enlace", league: "MLS (USA)", type: "club", isWhiteLogo: false },
+            { nombre: "Austin FC", escudo: "enlace", league: "MLS (USA)", type: "club", isWhiteLogo: false },
+            { nombre: "CF Montréal", escudo: "enlace", league: "MLS (USA)", type: "club", isWhiteLogo: false },
+            { nombre: "Chicago Fire FC", escudo: "enlace", league: "MLS (USA)", type: "club", isWhiteLogo: false },
+            { nombre: "Colorado Rapids", escudo: "enlace", league: "MLS (USA)", type: "club", isWhiteLogo: false },
+            { nombre: "Columbus Crew", escudo: "enlace", league: "MLS (USA)", type: "club", isWhiteLogo: false },
+            { nombre: "D.C. United", escudo: "enlace", league: "MLS (USA)", type: "club", isWhiteLogo: false },
+            { nombre: "FC Cincinnati", escudo: "enlace", league: "MLS (USA)", type: "club", isWhiteLogo: false },
+            { nombre: "FC Dallas", escudo: "enlace", league: "MLS (USA)", type: "club", isWhiteLogo: false },
+            { nombre: "Houston Dynamo", escudo: "enlace", league: "MLS (USA)", type: "club", isWhiteLogo: false },
+            { nombre: "Inter Miami CF", escudo: "enlace", league: "MLS (USA)", type: "club", isWhiteLogo: false },
+            { nombre: "LA Galaxy", escudo: "enlace", league: "MLS (USA)", type: "club", isWhiteLogo: false },
+            { nombre: "LAFC", escudo: "enlace", league: "MLS (USA)", type: "club", isWhiteLogo: false },
+            { nombre: "Minnesota United", escudo: "enlace", league: "MLS (USA)", type: "club", isWhiteLogo: false },
+            { nombre: "Nashville", escudo: "enlace", league: "MLS (USA)", type: "club", isWhiteLogo: false },
+            { nombre: "New England", escudo: "enlace", league: "MLS (USA)", type: "club", isWhiteLogo: false },
+            { nombre: "New York City", escudo: "enlace", league: "MLS (USA)", type: "club", isWhiteLogo: false },
+            { nombre: "Orlando City", escudo: "enlace", league: "MLS (USA)", type: "club", isWhiteLogo: false },
+            { nombre: "Philadelphia", escudo: "enlace", league: "MLS (USA)", type: "club", isWhiteLogo: false },
+            { nombre: "Portland Timbers", escudo: "enlace", league: "MLS (USA)", type: "club", isWhiteLogo: false },
+            { nombre: "Real Salt Lake", escudo: "enlace", league: "MLS (USA)", type: "club", isWhiteLogo: false },
+            { nombre: "Red Bulls", escudo: "enlace", league: "MLS (USA)", type: "club", isWhiteLogo: false },
+            { nombre: "SJ Earthquakes", escudo: "enlace", league: "MLS (USA)", type: "club", isWhiteLogo: false },
+            { nombre: "Sounders FC", escudo: "enlace", league: "MLS (USA)", type: "club", isWhiteLogo: false },
+            { nombre: "Sporting KC", escudo: "enlace", league: "MLS (USA)", type: "club", isWhiteLogo: false },
+            { nombre: "Toronto FC", escudo: "enlace", league: "MLS (USA)", type: "club", isWhiteLogo: false },
+            { nombre: "Whitecaps FC", escudo: "enlace", league: "MLS (USA)", type: "club", isWhiteLogo: false },
+
+            // Resto del Mundo
+            { nombre: "Soccer Aid", escudo: "https://canvvs.com/cdn/shop/files/SAWXI_LOGO_Web_Version.png?v=1685954924&width=1697", league: "Resto del Mundo", type: "club", isWhiteLogo: false },
+            { nombre: "Classic XI", escudo: "https://static.wikia.nocookie.net/fifa/images/5/5f/Classic_XI.png", league: "Resto del Mundo", type: "club", isWhiteLogo: false },
+            { nombre: "MLS All Stars", escudo: "https://upload.wikimedia.org/wikipedia/commons/7/76/MLS_crest_logo_RGB_gradient.svg", league: "MLS (USA)", type: "club", isWhiteLogo: false },
+
+            // Selecciones Nacionales
+            { nombre: "Alemania", escudo: "https://hatscripts.github.io/circle-flags/flags/de.svg", confederation: "Europa (UEFA)", type: "national", isWhiteLogo: false, isTop10National: true },
+            { nombre: "Bélgica", escudo: "https://hatscripts.github.io/circle-flags/flags/be.svg", confederation: "Europa (UEFA)", type: "national", isWhiteLogo: false, isTop10National: true },
+            { nombre: "Croacia", escudo: "https://hatscripts.github.io/circle-flags/flags/hr.svg", confederation: "Europa (UEFA)", type: "national", isWhiteLogo: false },
+            { nombre: "Dinamarca", escudo: "https://hatscripts.github.io/circle-flags/flags/dk.svg", confederation: "Europa (UEFA)", type: "national", isWhiteLogo: false },
+            { nombre: "España", escudo: "https://hatscripts.github.io/circle-flags/flags/es.svg", confederation: "Europa (UEFA)", type: "national", isWhiteLogo: false, isTop10National: true },
+            { nombre: "Francia", escudo: "https://hatscripts.github.io/circle-flags/flags/fr.svg", confederation: "Europa (UEFA)", type: "national", isWhiteLogo: false, isTop10National: true },
+            { nombre: "Inglaterra", escudo: "https://hatscripts.github.io/circle-flags/flags/gb-eng.svg", confederation: "Europa (UEFA)", type: "national", isWhiteLogo: false, isTop10National: true },
+            { nombre: "Italia", escudo: "https://hatscripts.github.io/circle-flags/flags/it.svg", confederation: "Europa (UEFA)", type: "national", isWhiteLogo: false, isTop10National: true },
+            { nombre: "Países Bajos", escudo: "https://hatscripts.github.io/circle-flags/flags/nl.svg", confederation: "Europa (UEFA)", type: "national", isWhiteLogo: false, isTop10National: true },
+            { nombre: "Polonia", escudo: "https://hatscripts.github.io/circle-flags/flags/pl.svg", confederation: "Europa (UEFA)", type: "national", isWhiteLogo: false },
+            { nombre: "Portugal", escudo: "https://hatscripts.github.io/circle-flags/flags/pt.svg", confederation: "Europa (UEFA)", type: "national", isWhiteLogo: false, isTop10National: true },
+            { nombre: "Suiza", escudo: "https://hatscripts.github.io/circle-flags/flags/ch.svg", confederation: "Europa (UEFA)", type: "national", isWhiteLogo: false },
+
+            { nombre: "Argentina", escudo: "https://hatscripts.github.io/circle-flags/flags/ar.svg", confederation: "Sudamérica (CONMEBOL)", type: "national", isWhiteLogo: false, isTop10National: true },
+            { nombre: "Brasil", escudo: "https://hatscripts.github.io/circle-flags/flags/br.svg", confederation: "Sudamérica (CONMEBOL)", type: "national", isWhiteLogo: false, isTop10National: true },
+            { nombre: "Colombia", escudo: "https://hatscripts.github.io/circle-flags/flags/co.svg", confederation: "Sudamérica (CONMEBOL)", type: "national", isWhiteLogo: false },
+            { nombre: "Uruguay", escudo: "https://hatscripts.github.io/circle-flags/flags/uy.svg", confederation: "Sudamérica (CONMEBOL)", type: "national", isWhiteLogo: false },
+
+            { nombre: "Canadá", escudo: "https://hatscripts.github.io/circle-flags/flags/ca.svg", confederation: "Norteamérica (CONCACAF)", type: "national", isWhiteLogo: false },
+            { nombre: "EE. UU.", escudo: "https://hatscripts.github.io/circle-flags/flags/us.svg", confederation: "Norteamérica (CONCACAF)", type: "national", isWhiteLogo: false },
+            { nombre: "México", escudo: "https://hatscripts.github.io/circle-flags/flags/mx.svg", confederation: "Norteamérica (CONCACAF)", type: "national", isWhiteLogo: false },
+
+            { nombre: "Egipto", escudo: "https://hatscripts.github.io/circle-flags/flags/eg.svg", confederation: "África (CAF)", type: "national", isWhiteLogo: false },
+            { nombre: "Ghana", escudo: "https://hatscripts.github.io/circle-flags/flags/gh.svg", confederation: "África (CAF)", type: "national", isWhiteLogo: false },
+            { nombre: "Marruecos", escudo: "https://hatscripts.github.io/circle-flags/flags/ma.svg", confederation: "África (CAF)", type: "national", isWhiteLogo: false },
+            { nombre: "Senegal", escudo: "https://hatscripts.github.io/circle-flags/flags/sn.svg", confederation: "África (CAF)", type: "national", isWhiteLogo: false },
+
+            { nombre: "Australia", escudo: "https://hatscripts.github.io/circle-flags/flags/au.svg", confederation: "Asia (AFC)", type: "national", isWhiteLogo: false },
+            { nombre: "Japón", escudo: "https://hatscripts.github.io/circle-flags/flags/jp.svg", confederation: "Asia (AFC)", type: "national", isWhiteLogo: false },
+            { nombre: "Corea del Sur", escudo: "https://hatscripts.github.io/circle-flags/flags/kr.svg", confederation: "Asia (AFC)", type: "national", isWhiteLogo: false },
+            { nombre: "Qatar", escudo: "https://hatscripts.github.io/circle-flags/flags/qa.svg", confederation: "Asia (AFC)", type: "national", isWhiteLogo: false }
+        ];
+
+        // Logos de confederaciones para el encabezado del modal
+        const confederationLogos = {
+            "Europa (UEFA)": { src: "https://i.imgur.com/C5Oelqu.png", isWhiteLogo: true },
+            "Sudamérica (CONMEBOL)": { src: "https://upload.wikimedia.org/wikipedia/en/a/a8/CONMEBOL_logo_%282017%29.svg", isWhiteLogo: true },
+            "Norteamérica (CONCACAF)": { src: "https://upload.wikimedia.org/wikipedia/commons/8/87/Concacaf_logo.svg", isWhiteLogo: true },
+            "África (CAF)": { src: "https://i.imgur.com/fZsgtV2.png", isWhiteLogo: true },
+            "Asia (AFC)": { src: "https://upload.wikimedia.org/wikipedia/commons/5/59/Asian_Football_Confederation_emblem.svg", isWhiteLogo: true }
+        };
+
+        // Logos de ligas para el encabezado del modal
+        const leagueLogos = {
+            "Liga EA Sports (ES)": { src: "https://futbolgalaxia.com/wp-content/uploads/2024/08/amrar-2.svg", isWhiteLogo: true },
+            "Liga Hypermotion (ES)": { src: "https://futbolgalaxia.com/wp-content/uploads/2024/08/amrar-2.svg", isWhiteLogo: true },
+            "Premier League (EN)": { src: "logos/premier.svg", isWhiteLogo: true },
+            "Serie A (IT)": { src: "logos/seriea.png", isWhiteLogo: false },
+            "Bundesliga (AL)": { src: "logos/bundesliga.svg", isWhiteLogo: true },
+            "Ligue 1 (FR)": { src: "https://upload.wikimedia.org/wikipedia/fr/d/d9/Logo_Ligue_1_2024.svg", isWhiteLogo: true },
+            "Eredivisie (PB)": { src: "logos/eredivise.svg", isWhiteLogo: true },
+            "MLS (USA)": { src: "https://upload.wikimedia.org/wikipedia/en/7/76/MLS_crest_logo_RGB_gradient.svg", isWhiteLogo: false }, // MLS Logo
+            "Resto del Mundo": { src: "logos/restodelmundo.svg", isWhiteLogo: true }
+        };
+
+        let suppressSound = false; // Controla el sonido para cambios de checkbox en lote
+
+        let personalizedTeams = []; // Array de *objetos de equipo seleccionados*
+        let personalizedSelections = []; // Array de *objetos de selecciones nacionales seleccionadas*
+        let activeTeamPool = []; // El conjunto de equipos/selecciones actualmente disponibles para la generación
+
+        // Configuración inicial de activeTeamPool (por defecto a Top 20)
+        function initializeActiveTeamPool() {
+            activeTeamPool = allTeamsData.filter(team => team.isTopClub);
+        }
+        initializeActiveTeamPool(); // Llamar al cargar el script
+
+        // Función para reproducir sonidos permitiendo la superposición
+        function reproducirSonido(id) {
+            const sonidoOriginal = document.getElementById(id);
+            if (sonidoOriginal) {
+                const sonidoClonado = sonidoOriginal.cloneNode(true);
+                sonidoClonado.volume = 0.5; // Ajustar volumen si es necesario
+                sonidoClonado.play();
+                sonidoClonado.addEventListener('ended', () => {
+                    sonidoClonado.remove();
+                });
+            }
+        }
+
+        // Función para mostrar notificaciones
+        function showNotification(notificationId, duracionExtendida = false) {
+            const notification = document.getElementById(notificationId);
+            notification.classList.remove('show', 'show-extended'); // Reiniciar animaciones
+            void notification.offsetWidth; // Forzar reflow
+            if (duracionExtendida) {
+                notification.classList.add('show-extended');
+            } else {
+                notification.classList.add('show');
+            }
+        }
+
+        // Función para mostrar notificaciones de aplicado/estado
+        function showChangeNotification(message) {
+            const notification = document.getElementById('appliedNotification');
+            notification.textContent = message;
+            notification.style.backgroundColor = "#9747FF"; // Changed to purple
+            showNotification('appliedNotification', false);
+        }
+
+        // Función para mostrar notificación de Equipo Seleccionado
+        function showTeamGeneratedNotification(teamName) {
+            const notification = document.getElementById('teamGeneratedNotification');
+            notification.textContent = `¡${teamName} Seleccionado!`; // Changed "Generado" to "Seleccionado"
+            notification.style.backgroundColor = '#9747FF'; // Changed to purple
+            notification.style.fontSize = '32px';
+            notification.style.boxShadow = '0 0 20px rgba(151, 71, 255, 0.7)'; // Changed to purple
+            notification.style.textShadow = '0 0 10px rgba(255, 255, 255, 0.7)';
+            showNotification('teamGeneratedNotification', true);
+        }
+
+        function generarEquipoUnico() {
+            let equipoContainer = document.getElementById('equipo1');
+
+            equipoContainer.classList.remove('animating');
+            equipoContainer.innerHTML = '';
+
+            reproducirSonido('sonidoClick');
+
+            if (activeTeamPool.length === 0) {
+                equipoContainer.innerHTML = `<h2 class="nombre-equipo">Error</h2><p>No hay equipos seleccionados para generar.</p>`;
+                return;
+            }
+
+            // If only one team is available, display it directly without animation
+            if (activeTeamPool.length === 1) {
+                const team = activeTeamPool[0];
+                const claseEscudo = team.isWhiteLogo ? "escudo escudo-blanco" : "escudo";
+                equipoContainer.innerHTML = `
+                    <h2 class="nombre-equipo">${team.nombre}</h2>
+                    <img src="${team.escudo}" alt="${team.nombre}" class="${claseEscudo}">
+                `;
+                reproducirSonido('sonidoFinal1');
+                showTeamGeneratedNotification(team.nombre);
+                return; // Exit function early
+            }
+
+            equipoContainer.classList.add('animating');
+
+            let intervalo;
+            let contador = 0;
+            const tiempoMaximo = 3000;
+            const velocidadCambio = 100;
+
+            clearInterval(intervalo);
+
+            intervalo = setInterval(() => {
+                let equipoRandom = activeTeamPool[Math.floor(Math.random() * activeTeamPool.length)];
+
+                const claseEscudo = equipoRandom.isWhiteLogo ? "escudo escudo-blanco" : "escudo";
+
+                equipoContainer.innerHTML = `
+                    <h2 class="nombre-equipo">${equipoRandom.nombre}</h2>
+                    <img src="${equipoRandom.escudo}" alt="${equipoRandom.nombre}" class="${claseEscudo}">
+                `;
+                contador += velocidadCambio;
+
+                if (contador >= tiempoMaximo) {
+                    clearInterval(intervalo);
+                    reproducirSonido('sonidoFinal1');
+                    showTeamGeneratedNotification(equipoRandom.nombre);
+                }
+            }, velocidadCambio);
+        }
+
+        // Búsqueda unificada para equipos y selecciones
+        function setupSearch(type) {
+            const searchInput = document.getElementById(`${type}SearchInput`);
+            const clearButton = document.getElementById(`clear${type === 'team' ? 'Search' : 'SelectionSearch'}Btn`);
+            const noResultsMessage = document.getElementById(`no${type === 'team' ? '' : 'Selections'}ResultsMessage`);
+            const container = document.getElementById(`${type === 'team' ? 'leagues-container' : 'selections-container'}`);
+
+            const itemSelector = `.${type}-item`;
+            const nameSelector = `.${type}-name`;
+            const sectionSelector = `.${type === 'team' ? 'league' : 'selection'}-section`;
+
+            // Diccionario de variaciones y abreviaturas comunes para equipos/selecciones
+            const variations = {
+                // Clubs
+                "atletico": ["atleti", "atletico madrid", "atlético", "atlético madrid", "atlético de madrid", "atm"],
+                "barcelona": ["barca", "barça", "fcb", "fc barcelona"],
+                "real madrid": ["madrid", "rmcf", "rm"],
+                "betis": ["real betis", "betis sevilla"],
+                "sevilla": ["sevilla fc", "sevillistas"],
+                "valencia": ["valencia cf", "vcf"],
+                "villarreal": ["villareal", "submarino amarillo"],
+                "athletic": ["athletic club", "athletic bilbao", "bilbao"],
+                "sociedad": ["real sociedad", "la real"],
+                "espanyol": ["español", "rcd espanyol"],
+                "celta": ["celta vigo", "celta de vigo"],
+                "mallorca": ["rcd mallorca"],
+                "valladolid": ["real valladolid"],
+                "cadiz": ["cádiz", "cadiz cf", "cádiz cf"],
+                "getafe": ["getafe cf"],
+                "osasuna": ["ca osasuna"],
+                "rayo": ["rayo vallecano"],
+                "girona": ["girona fc"],
+                "alaves": ["alavés", "deportivo alavés"],
+                "granada": ["granada cf"],
+                "elche": ["elche cf"],
+                "leganes": ["leganés", "cd leganés"],
+                "almeria": ["almería", "ud almería"],
+                "manchester": ["manchester united", "manchester city", "man utd", "man city", "united", "city"],
+                "united": ["manchester united", "man utd", "man u"],
+                "city": ["manchester city", "man city"],
+                "liverpool": ["lfc"],
+                "chelsea": ["cfc"],
+                "arsenal": ["afc"],
+                "tottenham": ["spurs", "tottenham hotspur"],
+                "west ham": ["hammers"],
+                "everton": ["toffees"],
+                "leicester": ["leicester city", "foxes"],
+                "wolves": ["wolverhampton"],
+                "newcastle": ["newcastle united", "magpies"],
+                "aston villa": ["villa"],
+                "brighton": ["brighton & hove", "brighton and hove", "seagulls"],
+                "southampton": ["saints"],
+                "palace": ["crystal palace", "eagles"],
+                "brentford": ["bees"],
+                "juventus": ["juve", "la vecchia signora", "juventus turin"],
+                "inter": ["inter milan", "internazionale", "inter de milan"],
+                "milan": ["ac milan", "acm"],
+                "napoli": ["napoles", "nápoles", "ssc napoli"],
+                "roma": ["as roma"],
+                "lazio": ["ss lazio"],
+                "atalanta": ["atalanta bc"],
+                "fiorentina": ["acf fiorentina", "viola"],
+                "torino": ["toro"],
+                "verona": ["hellas verona"],
+                "bologna": ["bolonia"],
+                "empoli": ["empoli fc"],
+                "udinese": ["udinese calcio"],
+                "venezia": ["venecia"],
+                "genoa": ["genoa cfc"],
+                "cagliari": ["cagliari calcio"],
+                "parma": ["parma calcio"],
+                "como": ["como 1907"],
+                "monza": ["ac monza"],
+                "bayern": ["bayern munich", "bayern münchen", "fcb"],
+                "dortmund": ["borussia dortmund", "bvb"],
+                "leipzig": ["rb leipzig"],
+                "leverkusen": ["bayer leverkusen", "bayer 04"],
+                "wolfsburg": ["vfl wolfsburg"],
+                "gladbach": ["borussia mönchengladbach", "borussia monchengladbach"],
+                "frankfurt": ["eintracht frankfurt"],
+                "union berlin": ["union"],
+                "freiburg": ["sc freiburg"],
+                "stuttgart": ["vfb stuttgart"],
+                "mainz": ["mainz 05", "fsv mainz"],
+                "hoffenheim": ["tsg hoffenheim"],
+                "holstein kiel": ["kiel"],
+                "st. pauli": ["pauli", "sankt pauli"],
+                "werder bremen": ["bremen"],
+                "psg": ["paris", "paris saint germain", "paris saint-germain", "paris sg"],
+                "marseille": ["marsella", "olympique marseille", "olympique de marseille", "om"],
+                "lyon": ["olympique lyon", "olympique lyonnais", "ol"],
+                "lille": ["losc lille", "losc"],
+                "monaco": ["as monaco"],
+                "rennes": ["stade rennais", "stade rennais fc"],
+                "nice": ["ogc nice"],
+                "lens": ["rc lens"],
+                "strasbourg": ["estrasburgo", "rc strasbourg"],
+                "nantes": ["fc nantes"],
+                "montpellier": ["montpellier hsc"],
+                "angers": ["angers sco"],
+                "reims": ["stade reims"],
+                "brest": ["stade brestois"],
+                "toulouse": ["toulouse fc"],
+                "auxerre": ["aj auxerre"],
+                "le havre": ["le havre ac"],
+                "saint-étienne": ["saint etienne", "asse"],
+                "ajax": ["afc ajax", "ajax amsterdam"],
+                "psv": ["psv eindhoven"],
+                "feyenoord": ["feyenoord rotterdam"],
+                "az": ["az alkmaar"],
+                "utrecht": ["fc utrecht"],
+                "vitesse": ["sbv vitesse"],
+                "twente": ["fc twente"],
+                "groningen": ["fc groningen"],
+                "heerenveen": ["sc heerenveen"],
+                "rotterdam": ["sparta rotterdam", "s. rotterdam"],
+                "zwolle": ["pec zwolle"],
+                "heracles": ["heracles almelo"],
+                "fortuna": ["fortuna sittard"],
+                "waalwijk": ["rkc waalwijk"],
+                "nec": ["n.e.c.", "nijmegen"],
+                "go ahead": ["go ahead eagles", "eagles"],
+                "cambuur": ["sc cambuur"],
+                "willem ii": ["willem"],
+                "soccer aid": ["soccer aid", "socceraid"],
+                "classic xi": ["classic xi", "classic 11"],
+                "mls all stars": ["mls all stars", "mls allstars"],
+                "atlanta united": ["atlanta", "united"],
+                "austin fc": ["austin"],
+                "cf montreal": ["montreal", "montréal"],
+                "chicago fire fc": ["chicago fire"],
+                "colorado rapids": ["colorado"],
+                "columbus crew": ["columbus"],
+                "d.c. united": ["dc united"],
+                "fc cincinnati": ["cincinnati"],
+                "fc dallas": ["dallas"],
+                "houston dynamo": ["houston"],
+                "inter miami cf": ["inter miami", "miami"],
+                "la galaxy": ["galaxy", "lag"],
+                "lafc": ["laf c"],
+                "minnesota united": ["minnesota"],
+                "nashville": ["nashville sc"],
+                "new england": ["new england revolution", "revolution"],
+                "new york city": ["nyc", "nyc fc"],
+                "orlando city": ["orlando"],
+                "philadelphia": ["philadelphia union", "union"],
+                "portland timbers": ["portland"],
+                "real salt lake": ["salt lake"],
+                "red bulls": ["new york red bulls", "nyrb"],
+                "sj earthquakes": ["san jose earthquakes", "earthquakes"],
+                "sounders fc": ["seattle sounders", "sounders"],
+                "sporting kc": ["sporting kansas city", "kansas city"],
+                "toronto fc": ["toronto"],
+                "whitecaps fc": ["vancouver whitecaps", "whitecaps"],
+
+
+                // National Teams
+                "alemania": ["germany"], "belgica": ["belgium"], "croacia": ["croatia"], "dinamarca": ["denmark"],
+                "espana": ["spain"], "francia": ["france"], "inglaterra": ["england"], "italia": ["italy"],
+                "paises bajos": ["netherlands", "holland"], "polonia": ["poland"], "portugal": ["portugal"], "suiza": ["switzerland"],
+                "argentina": ["argentina"], "brasil": ["brazil"], "colombia": ["colombia"], "uruguay": ["uruguay"],
+                "canada": ["canada"], "ee. uu.": ["usa", "united states", "estados unidos"], "mexico": ["mexico"],
+                "egipto": ["egypt"], "ghana": ["ghana"], "marruecos": ["morocco"], "senegal": ["senegal"],
+                "australia": ["australia"], "japon": ["japan"], "corea del sur": ["south korea"], "qatar": ["qatar"]
+            };
+
+            function normalizeText(text) {
+                return text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+            }
+
+            function performSearch() {
+                const searchTerm = normalizeText(searchInput.value);
+                let resultsFound = false;
+
+                if (searchTerm.length > 0) {
+                    clearButton.classList.add('visible');
+                } else {
+                    clearButton.classList.remove('visible');
+                }
+
+                const items = container.querySelectorAll(itemSelector);
+                items.forEach(item => {
+                    const itemName = normalizeText(item.querySelector(nameSelector).textContent);
+                    const potentialMatches = [itemName, ...Object.entries(variations)
+                        .filter(([key, values]) => itemName === normalizeText(key) || values.includes(itemName))
+                        .flatMap(([key, values]) => [normalizeText(key), ...values.map(normalizeText)])
+                    ];
+
+                    const matches = potentialMatches.some(namePart => namePart.includes(searchTerm)) ||
+                        Object.entries(variations).some(([key, values]) =>
+                            (normalizeText(key).includes(searchTerm) || values.some(v => normalizeText(v).includes(searchTerm))) &&
+                            (potentialMatches.includes(normalizeText(key)) || values.some(v => potentialMatches.includes(normalizeText(v))))
+                        );
+
+                    if (matches) {
+                        item.classList.remove('hidden');
+                        resultsFound = true;
+                    } else {
+                        item.classList.add('hidden');
+                    }
+                });
+
+                if (!resultsFound && searchTerm.length > 0) {
+                    noResultsMessage.classList.add('visible');
+                } else {
+                    noResultsMessage.classList.remove('visible');
+                }
+
+                // Ajustar la visibilidad de las secciones (ligas/confederaciones)
+                const sections = container.querySelectorAll(sectionSelector);
+                sections.forEach(section => {
+                    const visibleItemsInSection = section.querySelectorAll(`${itemSelector}:not(.hidden)`);
+                    if (visibleItemsInSection.length === 0 && searchTerm.length > 0) {
+                        section.classList.add('hidden');
+                    } else {
+                        section.classList.remove('hidden');
+                    }
+                });
+            }
+
+            searchInput.addEventListener('input', performSearch);
+            clearButton.addEventListener('click', () => {
+                clearButton.classList.add('rotating-out');
+                setTimeout(() => {
+                    searchInput.value = '';
+                    clearButton.classList.remove('visible', 'rotating-out');
+                    performSearch();
+                    searchInput.focus();
+                }, 150);
+            });
+            searchInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    searchInput.value = '';
+                    clearButton.classList.remove('visible');
+                    performSearch();
+                }
+            });
+        }
+
+        // Cargar equipos en el modal
+        function loadTeamsInModal() {
+            const leaguesContainer = document.getElementById('leagues-container');
+            leaguesContainer.innerHTML = ''; // Limpiar contenido anterior
+
+            const clubTeams = allTeamsData.filter(team => team.type === "club");
+            const leagues = [...new Set(clubTeams.map(team => team.league))];
+
+            leagues.forEach(leagueName => {
+                const leagueSection = document.createElement('div');
+                leagueSection.className = 'league-section';
+
+                const leagueHeader = document.createElement('div');
+                leagueHeader.className = 'league-header';
+
+                const logoInfo = leagueLogos[leagueName];
+                if (logoInfo) {
+                    const leagueLogo = document.createElement('img');
+                    leagueLogo.src = logoInfo.src;
+                    leagueLogo.alt = leagueName;
+                    leagueLogo.className = `league-logo ${logoInfo.isWhiteLogo ? 'escudo-blanco' : ''}`;
+                    leagueHeader.appendChild(leagueLogo);
+                }
+
+                const leagueTitle = document.createElement('h3');
+                leagueTitle.textContent = leagueName;
+                leagueHeader.appendChild(leagueTitle);
+
+                const selectAllLabel = document.createElement('label');
+                const selectAllCheckbox = document.createElement('input');
+                selectAllCheckbox.type = 'checkbox';
+                selectAllCheckbox.className = 'select-league';
+                selectAllCheckbox.dataset.league = leagueName;
+                selectAllLabel.appendChild(selectAllCheckbox);
+                selectAllLabel.appendChild(document.createTextNode('Seleccionar todos'));
+                leagueHeader.appendChild(selectAllLabel);
+
+                leagueSection.appendChild(leagueHeader);
+
+                const teamsList = document.createElement('div');
+                teamsList.className = 'teams-list';
+                teamsList.id = `${leagueName.replace(/[^a-zA-Z0-9]/g, '').toLowerCase()}-teams`; // ID limpio para la lista de equipos
+
+                const teamsInLeague = clubTeams.filter(team => team.league === leagueName);
+                teamsInLeague.forEach(team => {
+                    const teamItem = document.createElement('div');
+                    teamItem.className = 'team-item';
+                    teamItem.dataset.name = team.nombre;
+
+                    const label = document.createElement('label');
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.dataset.teamName = team.nombre; // Usar team.nombre para data-team
+                    checkbox.dataset.teamType = team.type;
+                    checkbox.className = 'team-checkbox';
+
+                    if (personalizedTeams.some(t => t.nombre === team.nombre)) {
+                        checkbox.checked = true;
+                        teamItem.classList.add('selected');
+                    }
+
+                    const logoClass = team.isWhiteLogo ? "team-logo escudo-blanco" : "team-logo";
+                    const logo = document.createElement('img');
+                    logo.src = team.escudo;
+                    logo.alt = team.nombre;
+                    logo.className = logoClass;
+                    // Handle placeholder "enlace" for escudo
+                    if (team.escudo === "enlace") {
+                        logo.src = "https://placehold.co/30x30/9747FF/FFFFFF?text=MLS"; // Placeholder image - changed color
+                        logo.alt = "Placeholder MLS Logo";
+                    }
+
+
+                    const name = document.createElement('span');
+                    name.className = 'team-name';
+                    name.textContent = team.nombre;
+
+                    label.appendChild(checkbox);
+                    label.appendChild(logo);
+                    label.appendChild(name);
+                    teamItem.appendChild(label);
+                    teamsList.appendChild(teamItem);
+                });
+
+                leagueSection.appendChild(teamsList);
+                leaguesContainer.appendChild(leagueSection);
+            });
+            setupSearch('team'); // Inicializar búsqueda para equipos
+        }
+
+        // Cargar selecciones en el modal
+        function loadSelectionsInModal() {
+            const selectionsContainerDiv = document.getElementById('selections-container');
+            selectionsContainerDiv.innerHTML = ''; // Limpiar contenido anterior
+
+            const nationalTeams = allTeamsData.filter(team => team.type === "national");
+            const confederations = [...new Set(nationalTeams.map(team => team.confederation))];
+
+            confederations.forEach(confederationName => {
+                const selectionSection = document.createElement('div');
+                selectionSection.className = 'selection-section';
+
+                const selectionHeader = document.createElement('div');
+                selectionHeader.className = 'selection-header';
+
+                const logoInfo = confederationLogos[confederationName];
+                if (logoInfo) {
+                    const confLogo = document.createElement('img');
+                    confLogo.src = logoInfo.src;
+                    confLogo.alt = confederationName;
+                    confLogo.className = `confederation-logo ${logoInfo.isWhiteLogo ? 'escudo-blanco' : ''}`;
+                    selectionHeader.appendChild(confLogo);
+                }
+
+                const confTitle = document.createElement('h3');
+                confTitle.textContent = confederationName;
+                selectionHeader.appendChild(confTitle);
+
+                const selectAllLabel = document.createElement('label');
+                const selectAllCheckbox = document.createElement('input');
+                selectAllCheckbox.type = 'checkbox';
+                selectAllCheckbox.className = 'select-all-selections-confederation'; // Changed class name to avoid conflict
+                selectAllCheckbox.dataset.confederation = confederationName;
+                selectAllLabel.appendChild(selectAllCheckbox);
+                selectAllLabel.appendChild(document.createTextNode('Seleccionar todas'));
+                selectionHeader.appendChild(selectAllLabel);
+
+                selectionSection.appendChild(selectionHeader);
+
+                const selectionsList = document.createElement('div');
+                selectionsList.className = 'selections-list';
+                selectionsList.id = `${confederationName.replace(/[^a-zA-Z0-9]/g, '').toLowerCase()}-selections`; // ID limpio
+
+                const teamsInConfederation = nationalTeams.filter(team => team.confederation === confederationName);
+                teamsInConfederation.forEach(team => {
+                    const selectionItem = document.createElement('div');
+                    selectionItem.className = 'selection-item';
+                    selectionItem.dataset.name = team.nombre;
+
+                    const label = document.createElement('label');
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.dataset.teamName = team.nombre;
+                    checkbox.dataset.teamType = team.type;
+                    checkbox.className = 'selection-checkbox';
+
+                    if (personalizedSelections.some(s => s.nombre === team.nombre)) {
+                        checkbox.checked = true;
+                        selectionItem.classList.add('selected');
+                    }
+
+                    // Usar la clase 'selection-escudo' para las banderas de selecciones
+                    const flag = document.createElement('img');
+                    flag.src = team.escudo; // team.escudo ya apunta a las banderas circulares
+                    flag.alt = team.nombre;
+                    flag.className = 'selection-escudo'; // CAMBIO CLAVE AQUÍ
+
+                    const name = document.createElement('span');
+                    name.className = 'selection-name';
+                    name.textContent = team.nombre;
+
+                    label.appendChild(checkbox);
+                    label.appendChild(flag);
+                    label.appendChild(name);
+                    selectionItem.appendChild(label);
+                    selectionsList.appendChild(selectionItem);
+                });
+
+                selectionSection.appendChild(selectionsList);
+                selectionsContainerDiv.appendChild(selectionSection);
+            });
+            setupSearch('selection'); // Inicializar búsqueda para selecciones
+        }
+
+        // Configurar la delegación de eventos para todos los checkboxes en el modal
+        document.getElementById('personalizationModal').addEventListener('change', function (e) {
+            if (!e.target.matches('input[type="checkbox"]')) return;
+
+            if (!suppressSound) {
+                reproducirSonido('sonidoClick');
+            }
+
+            const isChecked = e.target.checked;
+            const targetClassList = e.target.classList;
+
+            if (targetClassList.contains('select-all-selections-confederation')) { // Seleccionar todo por continente
+                const confederation = e.target.dataset.confederation;
+                const checkboxes = document.querySelectorAll(`#${confederation.replace(/[^a-zA-Z0-9]/g, '').toLowerCase()}-selections .selection-checkbox`);
+                suppressSound = true;
+                checkboxes.forEach(cb => {
+                    cb.checked = isChecked;
+                    cb.closest('.selection-item').classList.toggle('selected', isChecked);
+                });
+                setTimeout(() => suppressSound = false, 50); // Reiniciar después del lote
+            } else if (targetClassList.contains('select-league')) { // Seleccionar todo por liga
+                const league = e.target.dataset.league;
+                const checkboxes = document.querySelectorAll(`#${league.replace(/[^a-zA-Z0-9]/g, '').toLowerCase()}-teams .team-checkbox`);
+                suppressSound = true;
+                checkboxes.forEach(cb => {
+                    cb.checked = isChecked;
+                    cb.closest('.team-item').classList.toggle('selected', isChecked);
+                });
+                setTimeout(() => suppressSound = false, 50); // Reiniciar después del lote
+            } else if (e.target.id === 'selectAllTeams') { // Seleccionar todos los equipos
+                const checkboxes = document.querySelectorAll('.team-checkbox');
+                suppressSound = true;
+                checkboxes.forEach(cb => {
+                    cb.checked = isChecked;
+                    cb.closest('.team-item').classList.toggle('selected', isChecked);
+                });
+                setTimeout(() => suppressSound = false, 50);
+            } else if (e.target.id === 'selectAllSelections') { // Seleccionar todas las selecciones nacionales
+                const checkboxes = document.querySelectorAll('.selection-checkbox');
+                suppressSound = true;
+                checkboxes.forEach(cb => {
+                    cb.checked = isChecked;
+                    cb.closest('.selection-item').classList.toggle('selected', isChecked);
+                });
+                setTimeout(() => suppressSound = false, 50);
+            } else if (targetClassList.contains('team-checkbox')) { // Checkbox de equipo individual
+                e.target.closest('.team-item').classList.toggle('selected', isChecked);
+            } else if (targetClassList.contains('selection-checkbox')) { // Checkbox de selección nacional individual
+                e.target.closest('.selection-item').classList.toggle('selected', isChecked);
+            }
+        });
+
+
+        // Función para guardar equipos y selecciones personalizados
+        function savePersonalizedTeams() {
+            personalizedTeams = [];
+            personalizedSelections = [];
+
+            document.querySelectorAll('.team-checkbox:checked').forEach(checkbox => {
+                const teamName = checkbox.dataset.teamName;
+                const team = allTeamsData.find(t => t.nombre === teamName && t.type === 'club');
+                if (team) {
+                    personalizedTeams.push(team);
+                }
+            });
+
+            document.querySelectorAll('.selection-checkbox:checked').forEach(checkbox => {
+                const teamName = checkbox.dataset.teamName;
+                const team = allTeamsData.find(t => t.nombre === teamName && t.type === 'national');
+                if (team) {
+                    personalizedSelections.push(team);
+                }
+            });
+
+            // Actualizar activeTeamPool basándose en la personalización o las opciones del menú
+            if (personalizedTeams.length > 0 || personalizedSelections.length > 0) {
+                activeTeamPool = [...personalizedTeams, ...personalizedSelections];
+                document.querySelectorAll('.menu input[type="checkbox"]').forEach(checkbox => {
+                    checkbox.checked = false; // Deseleccionar checkboxes del menú si hay personalizados
+                });
+                let message = "Personalización guardada";
+                if (personalizedTeams.length > 0 && personalizedSelections.length > 0) {
+                    message = "Equipos y selecciones personalizados";
+                } else if (personalizedTeams.length > 0) {
+                    message = "Equipos personalizados";
+                } else if (personalizedSelections.length > 0) {
+                    message = "Selecciones personalizadas";
+                }
+                showChangeNotification(message);
+            } else {
+                // Si no hay equipos personalizados, volver a los Top 20 por defecto y mostrar notificación
+                document.querySelector('input[name="topClubs"]').checked = true;
+                document.querySelector('input[name="big5"]').checked = false;
+                document.querySelector('input[name="top10Countries"]').checked = false; // Asegurarse de que este también esté desmarcado
+                initializeActiveTeamPool(); // Restablecer a los top clubs
+                showChangeNotification("Volviendo a Top 20 Equipos");
+            }
+
+            closePersonalizationModal();
+        }
+
+        // Función para abrir el modal de personalización
+        function openPersonalizationModal() {
+            const modal = document.getElementById('personalizationModal');
+            document.body.classList.add('blur-background');
+            modal.classList.add('show');
+
+            // Cargar selecciones actuales (tanto clubes como selecciones nacionales)
+            loadTeamsInModal();
+            loadSelectionsInModal();
+
+            // Asegurarse de que los botones permanezcan en su lugar
+            document.querySelectorAll('.menu-container, .personalized-btn, .match-generator-btn').forEach(el => {
+                el.style.transform = 'none';
+                el.style.top = el.classList.contains('match-generator-btn') ? '90px' : '20px'; // Adjust top for new button
+                el.style.left = el.classList.contains('menu-container') ? '20px' : 'auto';
+                el.style.right = el.classList.contains('menu-container') ? 'auto' : '20px';
+            });
+
+            setTimeout(() => {
+                document.getElementById('teamSearchInput').focus();
+            }, 300);
+        }
+
+        // Función para cerrar el modal de personalización
+        function closePersonalizationModal() {
+            const modal = document.getElementById('personalizationModal');
+            modal.classList.remove('show');
+            document.body.classList.remove('blur-background');
+
+            // Restablecer estilos para elementos fijos después del blur
+            document.querySelectorAll('.menu-container, .menu-btn, .personalized-btn, .match-generator-btn').forEach(el => {
+                el.style.transform = '';
+                el.style.filter = '';
+                el.style.position = ''; // Eliminar fixed si se estableció temporalmente
+                el.style.top = '';
+                el.style.left = '';
+                el.style.right = '';
+            });
+            document.querySelectorAll('.notification').forEach(notif => {
+                notif.style.filter = '';
+                notif.style.zIndex = '';
+            });
+        }
+
+        // Escuchadores de eventos
+        document.getElementById('savePersonalization').addEventListener('click', () => {
+            reproducirSonido('sonidoClick');
+            savePersonalizedTeams();
+        });
+
+        document.getElementById('closeModalBtn').addEventListener('click', () => {
+            reproducirSonido('sonidoClick');
+            closePersonalizationModal();
+        });
+
+        document.getElementById('personalizationModal').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('personalizationModal')) {
+                reproducirSonido('sonidoClick');
+                closePersonalizationModal();
+            }
+        });
+
+        // Lógica de los checkboxes del menú (solo uno puede estar activo)
+        const menuCheckboxes = document.querySelectorAll('.menu input[type="checkbox"]');
+        menuCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', () => {
+                reproducirSonido('sonidoClick');
+                if (checkbox.checked) {
+                    // Desactivar equipos personalizados
+                    personalizedTeams = [];
+                    personalizedSelections = [];
+
+                    menuCheckboxes.forEach(otherCheckbox => {
+                        if (otherCheckbox !== checkbox) {
+                            otherCheckbox.checked = false;
+                        }
+                    });
+
+                    // Actualizar activeTeamPool según la opción de menú seleccionada
+                    if (checkbox.name === "topClubs") {
+                        activeTeamPool = allTeamsData.filter(team => team.isTopClub);
+                        showChangeNotification("Top 20 Equipos");
+                    } else if (checkbox.name === "big5") {
+                        // Logic for "Top 5 Grandes Ligas"
+                        activeTeamPool = allTeamsData.filter(team =>
+                            ["Liga EA Sports (ES)", "Premier League (EN)", "Serie A (IT)", "Bundesliga (AL)", "Ligue 1 (FR)"].includes(team.league)
+                        );
+                        showChangeNotification("Top 5 Grandes Ligas");
+                    } else if (checkbox.name === "top10Countries") {
+                        activeTeamPool = allTeamsData.filter(team => team.isTop10National);
+                        showChangeNotification("Top 10 Países");
+                    }
+                } else {
+                    // Si el último checkbox activo se desmarca, volver a marcarlo
+                    // Esto evita no tener ninguna categoría activa seleccionada
+                    // Solo si no hay opciones personalizadas activas
+                    const anyMenuCheckboxChecked = Array.from(menuCheckboxes).some(cb => cb.checked);
+                    if (!anyMenuCheckboxChecked && personalizedTeams.length === 0 && personalizedSelections.length === 0) {
+                        checkbox.checked = true; // Mantener este checkbox marcado si es el último y no hay personalizados
+                    }
+                }
+            });
+        });
+
+        // Clic en el botón personalizado
+        document.querySelector('.personalized-btn').addEventListener('click', (e) => {
+            reproducirSonido('sonidoClick');
+            openPersonalizationModal();
+        });
+
+        // Botones de navegación del modal
+        document.getElementById('equiposBtn').addEventListener('click', function () {
+            reproducirSonido('sonidoClick');
+            this.classList.add('active');
+            document.getElementById('seleccionesBtn').classList.remove('active');
+            document.getElementById('equiposContent').classList.add('active');
+            document.getElementById('seleccionesContent').classList.remove('active');
+            setupSearch('team'); // Reiniciar búsqueda cuando cambia la pestaña
+            document.getElementById('teamSearchInput').value = ''; // Limpiar búsqueda al cambiar de pestaña
+            document.getElementById('clearSearchBtn').classList.remove('visible');
+            document.getElementById('teamSearchInput').focus();
+        });
+
+        document.getElementById('seleccionesBtn').addEventListener('click', function () {
+            reproducirSonido('sonidoClick');
+            this.classList.add('active');
+            document.getElementById('equiposBtn').classList.remove('active');
+            document.getElementById('equiposContent').classList.remove('active');
+            document.getElementById('seleccionesContent').classList.add('active');
+            setupSearch('selection'); // Reiniciar búsqueda cuando cambia la pestaña
+            document.getElementById('selectionSearchInput').value = ''; // Limpiar búsqueda al cambiar de pestaña
+            document.getElementById('clearSelectionSearchBtn').classList.remove('visible');
+            document.getElementById('selectionSearchInput').focus();
+        });
+
+        // Configuración inicial de las búsquedas
+        document.addEventListener('DOMContentLoaded', () => {
+            setupSearch('team');
+            setupSearch('selection');
+        });
+    </script>
+
+    <footer class="footer">
+        <span style="color: #9747FF;">&copy;</span> 2025 FC Team Generator | Desarrollado por <span
+            style="color: #9747FF;">ImPaul</span> | Todos los derechos reservados. | Herramienta no oficial para generar equipos aleatorios | Instagram: <a
+            href="https://www.instagram.com/fcmatchgenerator/" target="_blank" class="instagram-link">@fcmatchgenerator</a>
+    </footer>
+
+</body>
+
+</html>
